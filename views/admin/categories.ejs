@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+    <%- include('../partial/head', {title: 'Categories | Zesty' }); %>
+</head>
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <%- include('../partial/toasts'); %>
+    </div>
+
+    <div class="sidebar p-3" id="sidebar">
+        <%- include('../partial/sidebar'); %>
+    </div>
+
+    <div class="main-content">
+        <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
+            <%- include('../partial/header'); %>
+        </header>
+
+        <div class="container-fluid p-4">
+            
+            <div class="row mb-4">
+                <div class="col-md-10">
+                    <h4 class="mb-0">Category Management</h4>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#add-category-modal">
+                        <i class="fas fa-plus me-2"></i>Add Category
+                    </button>
+                </div>
+            </div>
+
+            <div id="loading" class="text-center py-4">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <div class="food-card mb-4 d-none" id="categories-table-container">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categories-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="add-category-modal" tabindex="-1" aria-labelledby="add-category-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="add-category-modal-label">Add New Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-category-form">
+                        <div class="mb-3">
+                            <label for="add-category-name" class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="add-category-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="add-category-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="add-category-description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="add-category-btn">Add Category</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="edit-category-modal" tabindex="-1" aria-labelledby="edit-category-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-category-modal-label">Edit Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-category-form">
+                        <input type="hidden" id="edit-category-id">
+                        <div class="mb-3">
+                            <label for="edit-category-name" class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="edit-category-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-category-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="edit-category-description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="update-category-btn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partial/scripts') %>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let categories = [];
+            const categoriesTableBody = document.getElementById('categories-table-body');
+            const categoriesTableContainer = document.getElementById('categories-table-container');
+            const loading = document.getElementById('loading');
+
+            (async () => {
+                try {
+                    const response = await fetch('/api/admin/all-categories', {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        categories = data.categories;
+                        shwSucc('Categories Fetched.', data.msg);
+                    } else {
+                        shwErr('Categories were not fetched.', data.msg);
+                    }
+
+                } catch (err) {
+                    shwErr('Error', 'Something went wrong. Please try again.');
+                } finally {
+                    loading.classList.add('d-none');
+                    categoriesTableContainer.classList.remove('d-none');
+                    renderCategories();
+                }
+            })();
+
+            function renderCategories() {
+                categoriesTableBody.innerHTML = categories.map(category => `
+                    <tr>
+                        <td>${category.id}</td>
+                        <td>${category.name}</td>
+                        <td>${category.description || '-'}</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary btn-sm edit-category-btn" data-id="${category.id}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </td>
+                    </tr>
+                `).join('') || '<tr><td colspan="4" class="text-center text-muted py-4">No categories found</td></tr>';
+
+                document.querySelectorAll('.edit-category-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const cId = btn.dataset.id;
+                        const category = categories.find(c => c.id == cId);
+                        
+                        if (category) {
+                            document.getElementById('edit-category-id').value = category.id;
+                            document.getElementById('edit-category-name').value = category.name;
+                            document.getElementById('edit-category-description').value = category.description || '';
+                            
+                            const modal = new bootstrap.Modal(document.getElementById('edit-category-modal'));
+                            modal.show();
+                        }
+                    });
+                });
+            }
+
+            document.getElementById('add-category-btn').addEventListener('click', async () => {
+                try {
+                    const name = document.getElementById('add-category-name').value;
+                    const description = document.getElementById('add-category-description').value;
+                    
+                    if (!name) {
+                        shwErr('Validation Error', 'Please enter category name');
+                        return;
+                    }
+                    
+                    const response = await fetch('/api/admin/add-category', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: name,
+                            description: description
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        shwSucc('Success', data.msg);
+                        setTimeout(() => {
+                            location.reload()
+                        }, 1500);
+                    } else {
+                        shwErr('Add failed', data.msg);
+                    }
+                    
+                } catch (error) {
+                    shwErr('Error', 'Failed to add category');
+                }
+            });
+            document.getElementById('update-category-btn').addEventListener('click', async () => {
+                try {
+                    const cId = document.getElementById('edit-category-id').value;
+                    const name = document.getElementById('edit-category-name').value;
+                    const description = document.getElementById('edit-category-description').value;
+                    
+                    if (!name) {
+                        shwErr('Validation Error', 'Please enter category name');
+                        return;
+                    }
+                    
+                    const response = await fetch('/api/admin/edit-category', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: cId,
+                            name: name,
+                            description: description
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        shwSucc('Success', data.msg);
+                        setTimeout(() => {
+                            location.reload()
+                        }, 1500);
+                    } else {
+                        shwErr('Update failed', data.msg);
+                    }
+                    
+                } catch (error) {
+                    shwErr('Error', 'Failed to update category');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

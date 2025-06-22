@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+    <%- include('../partial/head', { title: 'Edit Profile | Zesty' }); %>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+</head>
+
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <%- include('../partial/toasts'); %>
+    </div>
+    <div class="sidebar p-3" id="sidebar">
+        <%- include('../partial/sidebar'); %>
+    </div>
+    <div class="main-content">
+        <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
+            <%- include('../partial/header'); %>
+        </header>
+        <div class="container-fluid p-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="fas fa-user-edit text-orange fs-4 me-3"></i>
+                        <h4 class="mb-0">Edit Profile</h4>
+                    </div>
+                    
+                    <div class="row align-items-center">
+                        <div class="col-auto mb-4">
+                            <div class="food-card">
+                                <div class="card-body p-3 text-center" style="width: 200px;">
+                                    <h6 class="text-orange mb-3">
+                                        <i class="fas fa-camera me-2"></i>Profile Picture
+                                    </h6>
+                                    <div class="position-relative d-inline-block mb-3">
+                                        <img src="<%= user.profile_pic %>" alt="Profile Picture" class="rounded-circle" width="120" height="120" style="object-fit: cover;" id="profile-preview">
+                                        <button type="button" class="btn btn-primary btn-sm position-absolute bottom-0 end-0 rounded-circle" style="width: 35px; height: 35px; padding: 0;" onclick="document.getElementById('pic-input').click()">
+                                            <i class="fas fa-camera"></i>
+                                        </button>
+                                    </div>
+                                    <input type="file" id="pic-input" accept="image/*" style="display: none;">
+                                    <p class="text-muted small mb-0">Click camera to change</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col mb-4">
+                            <div class="food-card h-100 d-flex align-items-center">
+                                <div class="card-body p-4 w-100">
+                                    <form id="profile-form">
+                                        <h6 class="text-orange mb-3">
+                                            <i class="fas fa-user me-2"></i>Personal Information
+                                        </h6>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control" id="first-name" name="first-name" placeholder="First Name" value="<%= user.first_name %>" required>
+                                                    <label for="first-name">First Name</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control" id="last-name" name="last-name" placeholder="Last Name" value="<%= user.last_name %>" required>
+                                                    <label for="last-name">Last Name</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <div class="form-floating">
+                                                <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" value="<%= user.email %>" required>
+                                                <label for="email">Email Address</label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Address Section -->
+                                        <h6 class="text-orange mb-3">
+                                            <i class="fas fa-map-marker-alt me-2"></i>Address Information
+                                        </h6>
+
+                                        <div class="mb-4">
+                                            <div class="form-floating">
+                                                <textarea class="form-control" id="address" name="address" placeholder="Street Address" style="height: 80px;"><%= user.address %></textarea>
+                                                <label for="address">Address</label>
+                                            </div>
+                                        </div>
+
+                                        <h6 class="text-orange mb-3">
+                                            <i class="fas fa-lock me-2"></i>Change Password
+                                        </h6>
+
+                                        <div class="row">
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="form-floating position-relative">
+                                                    <input type="password" class="form-control" id="current-password" name="current-password" placeholder="Current Password">
+                                                    <label for="current-password">Current Password</label>
+                                                    <button type="button" class="password-toggle" onclick="togglePassword('current-password')">
+                                                        <i class="fas fa-eye" id="current-password-icon"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="form-floating position-relative">
+                                                    <input type="password" class="form-control" id="new-password" name="new-password" placeholder="New Password">
+                                                    <label for="new-password">New Password</label>
+                                                    <button type="button" class="password-toggle" onclick="togglePassword('new-password')">
+                                                        <i class="fas fa-eye" id="new-password-icon"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="form-floating position-relative">
+                                                    <input type="password" class="form-control" id="confirm-password" name="confirm-password" placeholder="Confirm Password">
+                                                    <label for="confirm-password">Confirm Password</label>
+                                                    <button type="button" class="password-toggle" onclick="togglePassword('confirm-password')">
+                                                        <i class="fas fa-eye" id="confirm-password-icon"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex gap-3 justify-content-end">
+                                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                    <i class="fas fa-arrow-left me-2"></i>Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="saveButton" form="profile-form">
+                                    <i class="fas fa-save me-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="crop-modal" tabindex="-1" aria-labelledby="crop-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="crop-modal-label">
+                        <i class="fas fa-crop me-2"></i>Crop Profile Picture
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <img id="crop-image" style="max-width: 100%; max-height: 400px; display: block;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="crop-and-save">
+                        <i class="fas fa-check me-2"></i>Crop & Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partial/scripts'); %>
+        <script src="/static/scripts/auth.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
+        <script>
+            let cropper = null;
+            let croppedImageBlob = null;
+
+            function togglePassword(fieldId) {
+                const field = document.getElementById(fieldId);
+                const icon = document.getElementById(fieldId + '-icon');
+                
+                if (field.type === 'password') {
+                    field.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    field.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const picInput = document.getElementById('pic-input');
+                const cropModal = new bootstrap.Modal(document.getElementById('crop-modal'));
+                const cropImage = document.getElementById('crop-image');
+                const profilePreview = document.getElementById('profile-preview');
+
+                picInput.addEventListener('change', function (e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (event) {
+                            cropImage.src = event.target.result;
+                            cropModal.show();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                document.getElementById('crop-modal').addEventListener('shown.bs.modal', function () {
+                    const modalBody = document.querySelector('#crop-modal .modal-body');
+                    const availableHeight = modalBody.clientHeight - 32;
+                    const availableWidth = modalBody.clientWidth - 32;
+
+                    cropImage.style.maxWidth = availableWidth + 'px';
+                    cropImage.style.maxHeight = availableHeight + 'px';
+                    cropImage.style.width = 'auto';
+                    cropImage.style.height = 'auto';
+
+                    cropper = new Cropper(cropImage, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        preview: '.preview',
+                        responsive: true,
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: false,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                        autoCropArea: 0.69,
+                        minContainerWidth: availableWidth,
+                        minContainerHeight: availableHeight,
+                    });
+                });
+
+                document.getElementById('crop-modal').addEventListener('hidden.bs.modal', function () {
+                    if (cropper) {
+                        cropper.destroy();
+                        cropper = null;
+                    }
+                });
+
+                document.getElementById('crop-and-save').addEventListener('click', function () {
+                    if (cropper) {
+                        const canvas = cropper.getCroppedCanvas({
+                            width: 300,
+                            height: 300,
+                            imageSmoothingEnabled: true,
+                            imageSmoothingQuality: 'high',
+                        });
+
+                        canvas.toBlob(function (blob) {
+                            croppedImageBlob = blob;
+                            const url = URL.createObjectURL(blob);
+                            profilePreview.src = url;
+                            cropModal.hide();
+                        }, 'image/jpeg', 0.9);
+                    }
+                });
+
+                document.getElementById('profile-form').addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    const saveButton = document.getElementById('saveButton');
+                    const originalText = saveButton.innerHTML;
+                    saveButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                    saveButton.disabled = true;
+
+                    try {
+                        const formData = new FormData();
+
+                        formData.append('first_name', document.getElementById('first-name').value);
+                        formData.append('last_name', document.getElementById('last-name').value);
+                        formData.append('email', document.getElementById('email').value);
+                        formData.append('addr', document.getElementById('address').value);
+
+                        const currPwd = document.getElementById('current-password').value;
+                        const newPwd = document.getElementById('new-password').value;
+                        const confirmPassword = document.getElementById('confirm-password').value;
+
+                        if (currPwd === '') {
+                            shwErr("Password Error", "Please enter your password to continue");
+                            return;
+                        }
+                        formData.append('currPwd', currPwd);
+                        if (newPwd || confirmPassword) {
+                            if (!newPwd) {
+                                shwErr('Password Error', 'New password is required');
+                                return;
+                            }
+                            if (newPwd !== confirmPassword) {
+                                shwErr('Password Error', 'New passwords do not match');
+                                return;
+                            }
+                            if (newPwd.length < 8) {
+                                shwErr('Password Error', 'New password must be at least 6 characters long');
+                                return;
+                            }
+                            if (currPwd === newPwd) {
+                                shwErr('Password Error', 'New password must be different from current password');
+                                return;
+                            }
+                            formData.append('newPwd', newPwd);
+                        }
+
+                        if (croppedImageBlob) {
+                            formData.append('profilePicture', croppedImageBlob, 'profile.jpg');
+                        }
+
+                        const response = await fetch('/api/user/update-details', {
+                            method: 'POST',
+                            // headers: { 'Content-Type': 'application/json' },
+                            body: formData
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            shwSucc('Profile Updated', data.msg);
+                            if (data.is_verified === 0) {
+                                setTimeout(() => {
+                                    window.location.href = '/api/auth/logout';
+                                }, 1000);
+                            }
+                            setTimeout(() => {
+                               location.reload();
+                            }, 1500);
+                        } else {
+                            shwErr('Profile Update Failed', data.msg);
+                        }
+                    } catch (error) {
+                        shwErr('Update Failed', error);
+                    } finally {
+                        saveButton.innerHTML = originalText;
+                        saveButton.disabled = false;
+                    }
+                });
+            });
+        </script>
+</body>
+
+</html>

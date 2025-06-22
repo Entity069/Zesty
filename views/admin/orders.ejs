@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+    <%- include('../partial/head', { title: 'All Orders | Zesty' }) %>
+</head>
+
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <%- include('../partial/toasts') %>
+    </div>
+
+    <div class="sidebar p-3" id="sidebar">
+        <%- include('../partial/sidebar') %>
+    </div>
+
+    <div class="main-content">
+        <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
+            <%- include('../partial/header') %>
+        </header>
+
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <select class="form-select" id="status-filter" style="max-width: 200px;">
+                        <option value="">All Statuses</option>
+                        <option value="ordered">Ordered</option>
+                        <option value="preparing">Preparing</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="food-card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table">
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">Loading…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-3 text-muted">Loading orders…</p>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partial/scripts') %>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let orders = [];
+            const sf = document.getElementById('status-filter');
+
+            (async () => {
+                try {
+                    const response = await fetch('/api/admin/all-orders', {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        orders = data.orders;
+                        shwSucc('Order Fetched.', data.msg);
+                    } else {
+                        shwErr('Orders were not fetched.', data.msg);
+                    }
+
+                } catch (err) {
+                    shwErr('Error', 'Something went wrong. Please try again.');
+                } finally {
+                    document.getElementById('loading').classList.add('d-none');
+                    render();
+                }
+            })();
+
+            function render() {
+                const s = sf.value;
+                const filtered = orders.filter(o => !s || o.status === s);
+
+                document.getElementById('orders-table').innerHTML = filtered.map(o => `
+          <tr>
+            <td>ORD-${o.order_id}</td>
+            <td>
+              <div>${o.customer_fname} ${o.customer_lname}</div>
+              <small class="text-muted">${o.customer_email}</small>
+            </td>
+            <td>${(o.items_json || []).map(i => `${i.quantity}× ${i.name}`).join('<br>')}</td>
+            <td>₹${(o.total_amount)}</td>
+            <td><span class="badge status-${o.status} rounded-pill">${o.status}</span></td>
+            <td>${(o.created_at)}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-success deliver-order-btn" data-id="${o.order_id}"
+                ${['delivered', 'cancelled'].includes(o.status) ? 'disabled' : ''}>
+                Deliver
+              </button>
+              <button class="btn btn-sm btn-outline-danger cancel-order-btn ms-2" data-id="${o.order_id}"
+                ${['delivered', 'cancelled'].includes(o.status) ? 'disabled' : ''}>
+                Cancel
+              </button>
+            </td>
+          </tr>
+        `).join('') || `<tr><td colspan="7" class="text-center text-muted py-4">No orders found</td></tr>`;
+
+                document.querySelectorAll('.cancel-order-btn').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const orderId = btn.dataset.id;
+                        try {
+                            const res = await fetch('/api/order/cancel-order', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ orderId })
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                                shwSucc('Order Cancelled.', data.msg);
+                                setTimeout(() => {
+                                    location.reload()
+                                }, 1500);
+                            } else {
+                                shwErr('Cancellation failed.', data.msg);
+                            }
+                        } catch (err) {
+                            shwErr('Error', 'Something went wrong. Please try again.');
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.deliver-order-btn').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const orderId = btn.dataset.id;
+                        try {
+                            const res = await fetch('/api/order/deliver-order', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ orderId })
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                                shwSucc('Order Marked Delivered.', data.msg);
+                                setTimeout(() => {
+                                    location.reload()
+                                }, 1500);
+                            } else {
+                                shwErr('Delivery update failed.', data.msg);
+                            }
+                        } catch (err) {
+                            shwErr('Error', 'Something went wrong. Please try again.');
+                        }
+                    });
+                });
+            }
+
+            sf.addEventListener('change', render);
+        });
+    </script>
+</body>
+
+</html>

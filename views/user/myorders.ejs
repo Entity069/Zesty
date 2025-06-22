@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+    <%- include('../partial/head', { title: 'Home | My Orders' }); %>
+</head>
+
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <%- include('../partial/toasts'); %>
+    </div>
+    <div class="sidebar p-3" id="sidebar">
+        <%- include('../partial/sidebar'); %>
+    </div>
+    <div class="main-content">
+        <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
+            <%- include('../partial/header'); %>
+        </header>
+        <div class="container-fluid p-4">
+            <% if (orders===null) { %>
+                <div class="text-center py-5">
+                    <i class="fas fa-shopping-bag fs-1 text-muted mb-3"></i>
+                    <h4 class="text-muted">No orders found</h4>
+                    <p class="text-muted">You haven't placed any orders yet.</p>
+                    <a href="/search" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Browse Menu
+                    </a>
+                </div>
+                <% } else { %>
+                    <%  orders.forEach(order => { %>
+                        <div class="food-card m-4">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <h6 class="fw-bold mb-0 me-3">ORD-<%= order.order_id %>
+                                            </h6>
+                                            <span class="badge status-<%= order.status %> rounded-pill">
+                                                <%= order.status %>
+                                            </span>
+                                        </div>
+                                        <p class="text-muted small mb-2">
+                                            <%= humanize.naturaltime(order.updated_at) %>
+                                        </p>
+                                        <div class="mb-2">
+                                            <% for (let item of order.items_json) { %>
+                                                <small class="text-muted d-block">
+                                                    <%= item.quantity %>× <%= item.name %>
+                                                </small>
+                                                <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-md-end">
+                                        <h6 class="fw-bold text-orange mb-3">₹ <%= humanize.intcomma(order.total_amount) %>
+                                        </h6>
+                                        <% if (order.status !== 'cancelled') { %>
+                                        <div class="d-flex gap-2 justify-content-md-end">
+                                            <button class="btn btn-outline-primary btn-sm orenj-cancel-button" data-id="<%= order.order_id %>">
+                                                <i class="fas fa-x me-1"></i>Cancel
+                                            </button>
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                            <% } %>
+        </div>
+    </div>
+    <%- include('../partial/scripts'); %>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.orenj-cancel-button').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const orderId = btn.dataset.id;
+
+      try {
+        const res = await fetch('/api/order/cancel-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ orderId })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          shwSucc('Order Cancelled.', data.msg);
+          setTimeout(() => {
+            location.reload()
+            }, 1500);
+        } else {
+          shwErr('Cancellation cancelled due to failure.', data.msg);
+        }
+      } catch (err) {
+        shwErr('Error', 'Something went wrong. Please try again.');
+      }
+    });
+  });
+});
+</script>
+</body>
+
+</html>

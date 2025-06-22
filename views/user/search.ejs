@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <%- include('../partial/head', { title: 'Search Results | Zesty' }) %>
+</head>
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <%- include('../partial/toasts') %>
+    </div>
+
+    <div class="sidebar p-3" id="sidebar">
+        <%- include('../partial/sidebar') %>
+    </div>
+
+    <div class="main-content">
+        <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
+            <%- include('../partial/header') %>
+        </header>
+
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                        <% if (q !== '') { %>
+                        <h5 class="fw-bold mb-0">Search Results for “<%= q %>”</h5>
+                        <% } else { %>
+                        <h5 class="fw-bold mb-0">Search</h5>
+                        <% } %>
+                        <div class="ms-auto d-flex gap-2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <% if (items.length > 0) { %>
+            <div class="row g-4" id="search-results">
+                
+                    <% items.forEach(item => { %>
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="food-card position-relative h-100">
+                            <img src="<%= item.image %>" class="card-img-top" alt="<%= item.name %>">
+                            <div class="card-body">
+                                <h6 class="card-title fw-bold"><%= item.name %></h6>
+                                <p class="text-muted small mb-3"><%= item.description %></p>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h6 class="fw-bold mb-0 text-orange">₹ <%= item.price %></h6>
+                                    <button class="btn btn-primary btn-sm orenj-plus-button" data-id="<%= item.id %>">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                
+            </div>
+            <% } else { %>
+
+            <div id="no-results" class="text-center py-5">
+                <i class="fas fa-search fs-1 text-muted mb-3"></i>
+                <h4 class="text-muted">No results found</h4>
+                <p class="text-muted">Try changing your search query.</p>
+                <a href="/home" class="btn btn-primary">
+                    <i class="fas fa-home me-2"></i>Go Home
+                </a>
+            </div>
+            <% } %>
+        </div>
+    </div>
+
+    <%- include('../partial/scripts') %>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.orenj-plus-button').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const itemId = btn.dataset.id;
+
+      try {
+        const res = await fetch('/api/order/add-to-cart', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ itemId })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          shwSucc('Added to Cart', data.msg);
+        } else {
+          shwErr('Add Failed', data.msg);
+        }
+      } catch (err) {
+        shwErr('Error', 'Something went wrong. Please try again.');
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>

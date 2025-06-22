@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+    <%- include('../partial/head', { title: 'Shopping Cart | Zesty' }) %>
+</head>
+
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <%- include('../partial/toasts') %>
+    </div>
+
+    <div class="sidebar p-3" id="sidebar">
+        <%- include('../partial/sidebar') %>
+    </div>
+
+    <div class="main-content">
+        <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
+            <%- include('../partial/header') %>
+        </header>
+
+        <div class="container-fluid p-4">
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <% if (cart !==null) { %>
+                        <div id="cart-items">
+                            <% cart.items_json.forEach(item => { %>
+                                <div class="cart-item mb-3" data-id="<%= item.id %>"
+                                    data-price="<%= item.unit_price %>">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2">
+                                            <img src="<%= item.image %>" alt="<%= item.name %>"
+                                                class="img-fluid rounded">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6 class="fw-bold mb-1">
+                                                <%= item.name %>
+                                            </h6>
+                                            <p class="text-muted small mb-0">
+                                                <%= item.description %>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <span class="fw-bold text-orange">₹ <%= item.unit_price %></span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="quantity-controls d-flex align-items-center">
+                                                <button class="quantity-btn btn btn-outline-secondary btn-sm">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                                <span class="mx-3 fw-bold">
+                                                    <%= item.quantity %>
+                                                </span>
+                                                <button class="quantity-btn btn btn-outline-secondary btn-sm">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+                        <% } else { %>
+                            <div id="cart-items"></div>
+                            <div id="empty-cart" class="text-center py-5">
+                                <i class="fas fa-shopping-cart fs-1 text-muted mb-3"></i>
+                                <h4 class="text-muted">Your cart is empty</h4>
+                                <p class="text-muted">Add some delicious items to get started!</p>
+                                <a href="/search" class="btn btn-primary">
+                                    <i class="fas fa-search me-2"></i>Browse Menu
+                                </a>
+                            </div>
+                            <% } %>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="p-4 rounded-4 border position-sticky" style="top: 20px;">
+                        <h5 class="fw-bold mb-4">Order Summary</h5>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal</span>
+                                <span id="subtotal">₹ <%= (cart && cart.total_amount) ?
+                                        humanize.intcomma(cart.total_amount) : '0.00' %></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Discount</span>
+                                <span id="discount">₹ 0.00</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold">
+                                <span>Total</span>
+                                <span class="text-orange" id="total">₹ <%= (cart && cart.total_amount) ?
+                                        humanize.intcomma(cart.total_amount) : '0.00' %></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" id="checkout-btn" <% if (!cart || !cart.items_json ||
+                                cart.items_json.length===0) { %>disabled<% } %>>
+                                    <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partial/scripts'); %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const cartItemsContainer = document.getElementById('cart-items');
+                const emptyCartDiv = document.getElementById('empty-cart');
+                const subtotalElement = document.getElementById('subtotal');
+                const totalElement = document.getElementById('total');
+                const checkoutBtn = document.getElementById('checkout-btn');
+
+                const updatePrice = () => {
+                    let subtotal = 0;
+                    document.querySelectorAll('.cart-item').forEach(item => {
+                        const price = parseFloat(item.dataset.price);
+                        const quantity = parseInt(item.querySelector('.fw-bold.mx-3').textContent);
+                        subtotal += price * quantity;
+                    });
+
+                    const total = subtotal.toFixed(2);
+
+                    subtotalElement.textContent = `₹ ${total}`;
+                    totalElement.textContent = `₹ ${total}`;
+                };
+
+                const shwEmpty = () => {
+                    cartItemsContainer.innerHTML = '';
+                    emptyCartDiv.style.display = 'block';
+                    subtotalElement.textContent = '₹ 0.00';
+                    totalElement.textContent = '₹ 0.00';
+                    checkoutBtn.disabled = true;
+                };
+
+                const hideEmpty = () => {
+                    emptyCartDiv.style.display = 'none';
+                    checkoutBtn.disabled = false;
+                };
+
+                if (document.querySelectorAll('.cart-item').length === 0) {
+                    shwEmpty();
+                }
+
+                document.querySelectorAll('.cart-item').forEach(cartItem => {
+                    const itemId = cartItem.dataset.id;
+                    const minusBtn = cartItem.querySelector('.fa-minus').closest('button');
+                    const plusBtn = cartItem.querySelector('.fa-plus').closest('button');
+                    const quantityDisplay = cartItem.querySelector('.fw-bold.mx-3');
+
+                    const updateQuantity = async (action) => {
+                        try {
+                            const response = await fetch('/api/order/update-count', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ itemId, action })
+                            });
+
+                            if (!response.ok) {
+                                return;
+                            }
+
+                            let current = parseInt(quantityDisplay.textContent);
+
+                            if (action === 'increase') {
+                                quantityDisplay.textContent = current + 1;
+                                updatePrice();
+                            } else if (action === 'decrease') {
+                                if (current > 1) {
+                                    quantityDisplay.textContent = current - 1;
+                                    updatePrice();
+                                } else {
+                                    cartItem.remove();
+
+                                    if (document.querySelectorAll('.cart-item').length === 0) {
+                                        shwEmpty();
+                                    } else {
+                                        updatePrice();
+                                    }
+                                }
+                            }
+                        } catch (error) {
+                            console.error('updateQuantity error:', error);
+                        }
+                    };
+
+                    minusBtn.addEventListener('click', () => updateQuantity('decrease'));
+                    plusBtn.addEventListener('click', () => updateQuantity('increase'));
+                });
+
+                const placeOrder = async () => {
+                    try {
+                        const response = await fetch('/api/order/place-order', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            shwSucc("Order placed!", data.msg);
+                            setTimeout(() => {
+                                location.reload()
+                            }, 1500);
+                        } else {
+                            shwErr("Request Failed", data.msg);
+                        }
+                    } catch (error) {
+                        console.error('Error removing item:', error);
+                    }
+                };
+
+                checkoutBtn.addEventListener('click', placeOrder);
+            });
+        </script>
+
+</body>
+
+</html>

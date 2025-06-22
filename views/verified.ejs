@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <%- include('../partial/head', {title: 'Email Verified | Zesty' }); %>
+</head>
+<body class="reg-body min-vh-100 d-flex align-items-center justify-content-center position-relative overflow-hidden py-4 px-3">
+
+    <div class="position-fixed top-0 start-50 translate-middle-x mt-4 text-center" style="z-index: 1000;">
+        <h1 class="brand fw-bold fs-1 mb-2">
+            <i class="fas fa-utensils me-2"></i>Zesty
+        </h1>
+        <p class="brand-tagline small fw-normal">Delicious food, delivered fresh</p>
+    </div>
+
+    <button class="btn theme-toggle position-fixed top-0 end-0 mt-4 me-4 rounded-3 p-3 transition-all" onclick="toggleTheme()" style="z-index: 1000;">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+
+    <div class="auth-card rounded-4 w-100" style="max-width: 450px; margin-top: 6rem; z-index: 10;">
+        <div class="auth-content p-4 p-md-5">
+            <div class="auth-form">
+                <div class="mb-4 text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h2 class="fw-bold mb-2">Email Verified!</h2>
+                    <p class="text-muted">Your email address has been successfully verified.</p>
+                </div>
+                
+                <div class="d-flex flex-column gap-3">
+                    <button type="button" class="btn btn-primary w-100 rounded-3 fw-semibold py-3" onclick="window.location.href='/login'">
+                        <i class="fas fa-sign-in-alt me-2"></i>Continue to Sign In
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('./partial/scripts'); %>
+</body>
+</html>

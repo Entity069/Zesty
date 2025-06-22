@@ -1,0 +1,52 @@
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h4 class="brand mb-0">
+                <i class="fas fa-utensils me-2"></i>Zesty
+            </h4>
+            <button class="btn theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+        </div>
+        <div class="mb-4">
+            <small class="text-muted">Welcome Back!</small>
+            <h6 class="mb-0">
+                <%= user.first_name %>
+                    <%= user.last_name %>
+            </h6>
+        </div>
+        <nav class="nav flex-column flex-grow-1">
+            <div class="nav-item">
+                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/home">
+                    <button class="nav-link active d-flex align-items-center">
+                        <i class="fas fa-th-large me-3"></i>Overview
+                    </button>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/my-cart">
+                    <button class="nav-link d-flex align-items-center">
+                        <i class="fas fa-shopping-cart me-3"></i>Cart
+                    </button>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/my-orders">
+                    <button class="nav-link d-flex align-items-center">
+                        <i class="fas fa-clock me-3"></i>Order History
+                    </button>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/my-profile">
+                    <button class="nav-link d-flex align-items-center">
+                        <i class="fas fa-user me-3"></i>Profile
+                    </button>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/api/auth/logout">
+                    <button class="nav-link d-flex align-items-center">
+                        <i class="fas fa-sign-out-alt me-3"></i>Logout
+                    </button>
+                </a>
+            </div>
+        </nav>

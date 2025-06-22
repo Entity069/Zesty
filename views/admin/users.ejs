@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+    <%- include('../partial/head', {title: 'Users | Zesty' }); %>
+</head>
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <%- include('../partial/toasts'); %>
+    </div>
+
+    <div class="sidebar p-3" id="sidebar">
+        <%- include('../partial/sidebar'); %>
+    </div>
+
+    <div class="main-content">
+        <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
+            <%- include('../partial/header'); %>
+        </header>
+
+        <div class="container-fluid p-4">
+            
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <select class="form-select" id="user-type-filter">
+                        <option value="">All Users</option>
+                        <option value="user">Users</option>
+                        <option value="seller">Sellers</option>
+                        <option value="admin">Admins</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="loading" class="text-center py-4">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <div class="food-card mb-4 d-none" id="users-table-container">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Role</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Joined</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="edit-user-modal" tabindex="-1" aria-labelledby="edit-user-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-user-modal-label">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-user-form">
+                        <input type="hidden" id="edit-user-id">
+                        <div class="mb-3">
+                            <label for="edit-user-first-name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="edit-user-first-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-user-last-name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="edit-user-last-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-user-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="edit-user-email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-user-role" class="form-label">Role</label>
+                            <select class="form-select" id="edit-user-role" required>
+                                <option value="user">User</option>
+                                <option value="seller">Seller</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="update-user-btn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partial/scripts') %>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let users = [];
+            const userTypeFilter = document.getElementById('user-type-filter');
+            const usersTableBody = document.getElementById('users-table-body');
+            const usersTableContainer = document.getElementById('users-table-container');
+            const loading = document.getElementById('loading');
+
+            (async () => {
+                try {
+                    const response = await fetch('/api/admin/all-users', {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        users = data.users;
+                        shwSucc('Users Fetched.', data.msg);
+                    } else {
+                        shwErr('Users were not fetched.', data.msg);
+                    }
+
+                } catch (err) {
+                    shwErr('Error', 'Something went wrong. Please try again.');
+                } finally {
+                    loading.classList.add('d-none');
+                    usersTableContainer.classList.remove('d-none');
+                    render();
+                }
+            })();
+
+            function render() {
+                const selectedRole = userTypeFilter.value;
+                const filteredUsers = users.filter(user => !selectedRole || user.user_type === selectedRole);
+
+                usersTableBody.innerHTML = filteredUsers.map(user => `
+                    <tr>
+                        <td>USR-${user.id}</td>
+                        <td>${user.first_name} ${user.last_name}</td>
+                        <td>${user.email}</td>
+                        <td><span class="badge bg-${getRoleBadgeColor(user.user_type)}">${(user.user_type)}</span></td>
+                        <td><span class="badge bg-${user.is_verified ? 'success' : 'danger'}">${user.is_verified ? 'verified' : 'Not verified'}</span></td>
+                        <td>${(user.created_at)}</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary btn-sm edit-user-btn" data-id="${user.id}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </td>
+                    </tr>
+                `).join('') || '<tr><td colspan="7" class="text-center text-muted py-4">No users found</td></tr>';
+
+                document.querySelectorAll('.edit-user-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const userId = btn.dataset.id;
+                        const user = users.find(u => u.id == userId);
+                        
+                        if (user) {
+                            document.getElementById('edit-user-id').value = user.id;
+                            document.getElementById('edit-user-first-name').value = user.first_name;
+                            document.getElementById('edit-user-last-name').value = user.last_name;
+                            document.getElementById('edit-user-email').value = user.email;
+                            document.getElementById('edit-user-role').value = user.user_type;
+                            
+                            const modal = new bootstrap.Modal(document.getElementById('edit-user-modal'));
+                            modal.show();
+                        }
+                    });
+                });
+            }
+
+            function getRoleBadgeColor(role) {
+                switch (role) {
+                    case 'admin': return 'danger';
+                    case 'seller': return 'warning';
+                    case 'user': return 'info';
+                    default: return 'secondary';
+                }
+            }
+
+            userTypeFilter.addEventListener('change', render);
+
+            document.getElementById('update-user-btn').addEventListener('click', async () => {
+                try {
+                    const userId = document.getElementById('edit-user-id').value;
+                    const firstName = document.getElementById('edit-user-first-name').value;
+                    const lastName = document.getElementById('edit-user-last-name').value;
+                    const email = document.getElementById('edit-user-email').value;
+                    const role = document.getElementById('edit-user-role').value;
+                    
+                    if (!firstName || !lastName || !email) {
+                        shwErr('Validation Error', 'Please fill all required fields');
+                        return;
+                    }
+                    console.log(userId);
+                    const response = await fetch('/api/admin/edit-user', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: userId,
+                            first_name: firstName,
+                            last_name: lastName,
+                            email: email,
+                            user_type: role
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('edit-user-modal'));
+                        modal.hide();
+                        shwSucc('Success', 'User updated successfully');
+                        setTimeout(() => {
+                            location.reload()
+                        }, 1500);
+                    } else {
+                        shwErr('Update failed', data.msg);
+                    }
+                    
+                } catch (error) {
+                    shwErr('Error', 'Failed to update user');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
