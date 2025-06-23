@@ -2,7 +2,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const storage = multer.diskStorage({
+const storageProfile = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = 'public/uploads/profile-pics/';
     
@@ -19,6 +19,23 @@ const storage = multer.diskStorage({
   }
 });
 
+const storageItem = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = 'public/uploads/item-images/';
+    
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const suffix = Date.now();
+    const ext = path.extname(file.originalname);
+    cb(null, `item-image-${suffix}${ext}`);
+  }
+});
+
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
@@ -27,10 +44,20 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({
-  storage,
+const uploadProfile = multer({
+  storage: storageProfile,
   fileFilter,
   limits: { fileSize: 2 * 1024 * 1024 }
 });
 
-module.exports = upload;
+const uploadItem = multer({
+  storage: storageItem,
+  fileFilter,
+  limits: { fileSize: 2 * 1024 * 1024 }
+});
+
+module.exports = {
+  uploadProfile,
+  uploadItem
+
+};

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+    <%- include('../partial/head', { title: 'Item Info | Zesty' }) %>
+</head>
+
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <%- include('../partial/toasts') %>
+    </div>
+
+    <div class="sidebar p-3" id="sidebar">
+        <%- include('../partial/sidebar') %>
+    </div>
+
+    <div class="main-content">
+        <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
+            <%- include('../partial/header') %>
+        </header>
+
+        <div class="container-fluid p-4">
+            <!-- Back button + Image & Details columns -->
+            <div class="row align-items-center mb-4">
+                <div class="col-12 mb-3">
+                    <button class="btn btn-outline-secondary" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left me-2"></i>Back
+                    </button>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="food-card h-100">
+                        <div class="card-body p-0">
+                            <img src="<%= item.image %>" class="w-100" alt="<%= item.name %>"
+                                style="height: 400px; object-fit: cover; border-radius: 16px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="food-card h-100">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h2 class="fw-bold mb-2">
+                                        <%= item.name %>
+                                    </h2>
+                                    <p class="text-muted mb-3">
+                                        <%= item.description %>
+                                    </p>
+                                </div>
+                                <% if (item.status==='available' ) { %>
+                                    <span class="badge bg-success">Available</span>
+                                    <% } else if (item.status==='unavailable' ) { %>
+                                        <span class="badge bg-warning">Unavailable</span>
+                                        <% } else { %>
+                                            <span class="badge bg-danger">Discontinued</span>
+                                            <% } %>
+                            </div>
+
+                            <div class="mb-4">
+                                <h3 class="text-orange fw-bold mb-0">₹ <%= item.price %>
+                                </h3>
+                                <small class="text-muted">per unit</small>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rating">
+                                        <i class="fas fa-star"></i>
+                                        <span id="averageRating"><%= item.rating %></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold mb-3">Quantity</label>
+                                        <div class="quantity-controls d-flex align-items-center">
+                                            <button class="quantity-btn btn btn-sm btn-outline-secondary"
+                                                id="decrease-btn" type="button">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <span class="quantity-display px-3 py-2 border rounded text-center mx-2"
+                                                id="quantity-display" style="min-width: 60px;">1</span>
+                                            <button class="quantity-btn btn btn-sm btn-outline-secondary"
+                                                id="increase-btn" type="button">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 text-md-end">
+                                        <label class="form-label fw-semibold mb-3">Total Price</label>
+                                        <div>
+                                            <span class="h4 text-orange fw-bold">
+                                                ₹ <span id="total-price">
+                                                    <%= item.price %>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 mb-4">
+                                <% if (item.status==='available' ) { %>
+                                    <button class="btn btn-primary btn-lg" id="add-cart" data-item-id="<%= item.id %>"
+                                        data-item-price="<%= item.price %>">
+                                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                                    </button>
+                                    <% } else { %>
+                                        <button class="btn btn-secondary btn-lg" disabled>
+                                            <i class="fas fa-ban me-2"></i>Not Available
+                                        </button>
+                                        <% } %>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6 mb-4">
+                    <div class="food-card h-100">
+                        <div class="card-body p-4 d-flex flex-column h-100">
+                            <h6 class="text-orange mb-4">
+                                <i class="fas fa-info-circle me-2"></i>Item Information
+                            </h6>
+                            <div class="row g-4 flex-grow-2">
+                                <div class="col-md-6">
+                                    <div class="p-3 rounded h-100 d-flex flex-column justify-content-center"
+                                        style="background: var(--light-orange);">
+                                        <small class="text-muted d-block mb-3">Category</small>
+                                        <span class="fw-semibold">
+                                            <%= item.cname %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 rounded h-100 d-flex flex-column justify-content-center"
+                                        style="background: var(--light-orange);">
+                                        <small class="text-muted d-block mb-3">Seller</small>
+                                        <span class="fw-semibold">
+                                            <%= item.fname %>
+                                                <%= item.lname %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="food-card h-100">
+                        <div class="card-body p-4 d-flex flex-column h-100">
+                            <h6 class="text-orange mb-4">
+                                <i class="fas fa-star me-2"></i>Rate this Product
+                            </h6>
+                            <div class="flex-grow-1 d-flex flex-column justify-content-center">
+                                <span>Your Rating</span>
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <!-- helpful: https://css-tricks.com/a-css-only-star-rating-component-and-more-part-2 -->
+                                    <div class="star-rating me-3">
+                                        <i class="far fa-star" data-rating="1"></i>
+                                        <i class="far fa-star" data-rating="2"></i>
+                                        <i class="far fa-star" data-rating="3"></i>
+                                        <i class="far fa-star" data-rating="4"></i>
+                                        <i class="far fa-star" data-rating="5"></i>
+                                        <input type="hidden" id="rating-value" name="rating">
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="submit-rating-btn">Submit Rating</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partial/scripts') %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const decreaseBtn = document.getElementById('decrease-btn');
+                const increaseBtn = document.getElementById('increase-btn');
+                const qtyDisplay = document.getElementById('quantity-display');
+                const totalPrice = document.getElementById('total-price');
+                const addCartBtn = document.getElementById('add-cart');
+                let quantity = 1;
+                const unitPrice = parseFloat(addCartBtn.dataset.itemPrice);
+                const itemId = addCartBtn.dataset.itemId;
+
+                function updateQuantity() {
+                    qtyDisplay.textContent = quantity;
+                    totalPrice.textContent = (quantity * unitPrice).toFixed(2);
+                    decreaseBtn.disabled = quantity <= 1;
+                }
+
+                decreaseBtn.addEventListener('click', () => {
+                    if (quantity > 1) {
+                        quantity--;
+                        updateQuantity();
+                    }
+                });
+                increaseBtn.addEventListener('click', () => {
+                    quantity++;
+                    updateQuantity();
+                });
+
+                addCartBtn.addEventListener('click', async () => {
+                    const orig = addCartBtn.innerHTML;
+                    addCartBtn.disabled = true;
+                    addCartBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+                    try {
+                        const resp = await fetch('/api/order/add-to-cart', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ itemId, quantity })
+                        });
+                        const data = await resp.json();
+                        if (data.success) {
+                            shwSucc('Added to Cart', data.msg);
+                            quantity = 1;
+                            updateQuantity();
+                        } else {
+                            shwErr('Add Failed', data.msg);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        shwErr('Error', 'Something went wrong. Please try again.');
+                    } finally {
+                        addCartBtn.disabled = false;
+                        addCartBtn.innerHTML = orig;
+                    }
+                });
+                updateQuantity();
+
+                // helpful: https://stackoverflow.com/a/61993227
+                const stars = document.querySelectorAll('.star-rating i');
+                const rating = document.getElementById('rating-value');
+                const submitBtn = document.getElementById('submit-rating-btn');
+                let currentRating = 0;
+
+                stars.forEach(star => {
+                    star.addEventListener('mouseover', () => {
+                        const hoverVal = +star.dataset.rating;
+                        stars.forEach(s => {
+                            s.classList.toggle('fas', +s.dataset.rating <= hoverVal);
+                            s.classList.toggle('far', +s.dataset.rating > hoverVal);
+                        });
+                    });
+
+                    star.addEventListener('mouseout', () => {
+                        stars.forEach(s => {
+                            s.classList.toggle('fas', +s.dataset.rating <= currentRating);
+                            s.classList.toggle('far', +s.dataset.rating > currentRating);
+                        });
+                    });
+                    star.addEventListener('click', () => {
+                        currentRating = +star.dataset.rating;
+                        rating.value = currentRating;
+                        stars.forEach(s => {
+                            s.classList.toggle('fas', +s.dataset.rating <= currentRating);
+                            s.classList.toggle('far', +s.dataset.rating > currentRating);
+                        });
+                    });
+                });
+
+                submitBtn.addEventListener('click', async () => {
+                    if (!rating.value) {
+                        shwErr('Error', 'Please select a star rating.');
+                        return;
+                    }
+
+                    const originalText = submitBtn.innerHTML;
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+
+                    try {
+                        const response = await fetch('/api/order/rate', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ itemId: itemId, rating: rating.value })
+                        });
+
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            shwSucc('Rating Submitted', data.msg);
+                            setTimeout(() => {
+                               location.reload();
+                            }, 1500);
+                        } else {
+                            shwErr('Submission Failed', data.msg);
+                        }
+                    } catch (error) {
+                        shwErr('Error', 'Something went wrong. Please try again.');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
+                });
+
+            });
+        </script>
+</body>
+
+</html>

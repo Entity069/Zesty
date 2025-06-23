@@ -4,6 +4,7 @@ const router = express.Router();
 const userPages = require('../controllers/user/pages');
 const orderPages = require('../controllers/orders/pages');
 const adminPages = require('../controllers/admin/pages');
+const sellerPages = require('../controllers/seller/pages');
 
 const authMiddlewares = require('../middlewares/auth');
 
@@ -18,10 +19,12 @@ router.get('/my-cart', authMiddlewares.verifyToken, authMiddlewares.loginRequire
 router.get('/my-profile', authMiddlewares.verifyToken, authMiddlewares.loginRequired, userPages.profile);
 
 router.get('/search', authMiddlewares.verifyToken, authMiddlewares.loginRequired, orderPages.search);
-router.get('/order-placed', authMiddlewares.verifyToken, authMiddlewares.loginRequired, orderPages.placeOrder);
+router.get('/item', authMiddlewares.verifyToken, authMiddlewares.loginRequired, orderPages.itemDetails);
 
 router.get('/all-orders', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllOrders);
 router.get('/all-users', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllUsers);
 router.get('/all-categories', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllCategories);
+
+router.get('/add-items', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.addItems);
 
 module.exports = router;

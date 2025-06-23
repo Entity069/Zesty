@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <%- include('../partial/head', {title: 'Add Items | Zesty' }); %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+</head>
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <%- include('../partial/toasts'); %>
+    </div>
+
+    <div class="sidebar p-3" id="sidebar">
+        <%- include('../partial/sidebar'); %>
+    </div>
+
+    <div class="main-content">
+        <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
+            <%- include('../partial/header'); %>
+        </header>
+
+        <div class="container-fluid p-4">
+            <div class="row align-items-center">
+                
+                <div class="col-lg-8">
+                    <form id="add-item-form">
+                        
+                        <div class="food-card mb-4">
+                            <div class="card-body">
+                                <h5 class="fw-bold mb-4">Basic Information</h5>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-8">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="item-name" placeholder="Item Name" required>
+                                            <label for="item-name">Item Name</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control" id="item-price" placeholder="Price" step="0.01" min="0" required>
+                                            <label for="item-price">Price (₹)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="item-description" placeholder="Description" style="height: 100px;" required></textarea>
+                                            <label for="item-description">Description</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="item-category" required>
+                                                <% categories.forEach(category => { %>
+                                                <option value="<%= category.id %>"><%= category.name %></option>
+                                                <% }) %>
+                                            </select>
+                                            <label for="item-category">Category</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="item-status" required>
+                                                <option value="available">Available</option>
+                                                <option value="unavailable">Unavailable</option>
+                                                <option value="discontinued">Discontinued</option>
+                                            </select>
+                                            <label for="item-status">Status</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="food-card mb-4">
+                            <div class="card-body">
+                                <h5 class="fw-bold mb-4">Item Image</h5>
+                                
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label for="item-image" class="form-label">Upload Image</label>
+                                        <input type="file" class="form-control" id="item-image" accept="image/*">
+                                    </div>
+                                </div>  
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="position-sticky" style="top: 20px;">
+                        <div class="food-card">
+                            <div class="card-body">
+                                <h5 class="fw-bold mb-4">Preview</h5>
+                                
+                                <div id="item-preview">
+                                    <div class="food-card position-relative">
+                                        <img src="https://placehold.co/300x200/e9ecef/6c757d?text=No+Image" class="card-img-top" alt="Preview" id="preview-image">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="rating me-2">
+                                                    <i class="fas fa-star me-1"></i>New
+                                                </div>
+                                                <small class="text-muted">(0 Reviews)</small>
+                                            </div>
+                                            <h6 class="card-title fw-bold" id="preview-name">Item Name</h6>
+                                            <p class="text-muted small mb-3" id="preview-description">Item description will appear here...</p>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <h6 class="fw-bold mb-0 text-orange" id="preview-price">₹0.00</h6>
+                                                <button class="btn btn-primary btn-sm" type="button">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 mt-4">
+                                    <button type="submit" class="btn btn-primary" id="add-item-btn" form="add-item-form">
+                                        <i class="fas fa-plus me-2"></i>Add Item
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="crop-modal" tabindex="-1" aria-labelledby="crop-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="crop-modal-label">
+                        <i class="fas fa-crop me-2"></i>Crop Item Image
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <img id="crop-image" style="max-width: 100%; max-height: 400px; display: block;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="crop-and-save">
+                        <i class="fas fa-check me-2"></i>Crop & Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partial/scripts'); %>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let cropper = null;
+            let croppedImageBlob = null;
+            
+            const form = document.getElementById('add-item-form');
+            const name = document.getElementById('item-name');
+            const price = document.getElementById('item-price');
+            const description = document.getElementById('item-description');
+            const category = document.getElementById('item-category');
+            const status = document.getElementById('item-status');
+            const image = document.getElementById('item-image');
+            const previewName = document.getElementById('preview-name');
+            const previewPrice = document.getElementById('preview-price');
+            const previewDescription = document.getElementById('preview-description');
+            const previewImage = document.getElementById('preview-image');
+            const cropModal = new bootstrap.Modal(document.getElementById('crop-modal'));
+            const cropImage = document.getElementById('crop-image');
+
+            function updatePreview() {
+                const itemName = name.value || 'Item Name';
+                const itemPrice = parseFloat(price.value) || 0;
+                const itemDescription = description.value || 'Item description will appear here...';
+
+                previewName.textContent = itemName;
+                previewPrice.textContent = `₹ ${itemPrice}`;
+                previewDescription.textContent = itemDescription;
+            }
+
+            [name, price, description].forEach(input => {
+                input.addEventListener('input', updatePreview);
+            });
+
+            image.addEventListener('change', function(e) {
+                if (e.target.files.length === 0) return;
+                const file = e.target.files[0];
+                
+                if (!file.type.startsWith('image/')) {
+                    shwErr('Invalid File', 'Please select an image file');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    cropImage.src = e.target.result;
+                    cropModal.show();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            document.getElementById('crop-modal').addEventListener('shown.bs.modal', function() {
+                const modalBody = document.querySelector('#crop-modal .modal-body');
+                const availableHeight = modalBody.clientHeight - 32;
+                const availableWidth = modalBody.clientWidth - 32;
+
+                cropImage.style.maxWidth = availableWidth + 'px';
+                cropImage.style.maxHeight = availableHeight + 'px';
+                cropImage.style.width = 'auto';
+                cropImage.style.height = 'auto';
+
+                cropper = new Cropper(cropImage, {
+                    aspectRatio: 3/2,
+                    viewMode: 1,
+                    preview: '.preview',
+                    responsive: true,
+                    restore: false,
+                    guides: true,
+                    center: true,
+                    highlight: false,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false,
+                    autoCropArea: 0.8,
+                    minContainerWidth: availableWidth,
+                    minContainerHeight: availableHeight,
+                });
+            });
+
+            document.getElementById('crop-modal').addEventListener('hidden.bs.modal', function() {
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+            });
+
+            document.getElementById('crop-and-save').addEventListener('click', function() {
+                if (cropper) {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 400,
+                        height: 300,
+                        imageSmoothingEnabled: true,
+                        imageSmoothingQuality: 'high',
+                    });
+
+                    canvas.toBlob(function(blob) {
+                        croppedImageBlob = blob;
+                        const url = URL.createObjectURL(blob);
+                        previewImage.src = url;
+                        cropModal.hide();
+                    }, 'image/jpeg', 0.9);
+                }
+            });
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const addBtn = document.getElementById('add-item-btn');
+                const originalText = addBtn.innerHTML;
+                addBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding Item...';
+                addBtn.disabled = true;
+
+                try {
+                    const formData = new FormData();
+                    
+                    formData.append('name', name.value);
+                    formData.append('price', price.value);
+                    formData.append('description', description.value);
+                    formData.append('category', category.value);
+                    formData.append('status', status.value);
+                    
+                    if (croppedImageBlob) {
+                        formData.append('itemImage', croppedImageBlob, 'item-image.jpg');
+                    }
+
+                    const response = await fetch('/api/seller/add-item', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        shwSucc('Item Added', data.msg);
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        shwErr('Add Item Failed', data.msg);
+                    }
+                } catch (error) {
+                    shwErr('Error', 'Failed to add item. Please try again.');
+                } finally {
+                    addBtn.innerHTML = originalText;
+                    addBtn.disabled = false;
+                }
+            });
+
+            updatePreview();
+        });
+    </script>
+</body>
+</html>

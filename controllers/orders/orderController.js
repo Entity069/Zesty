@@ -210,7 +210,7 @@ const updateOrderItemCount = async (req, res) => {
 
 const addToCart = async (req, res) => {
     try {
-        const { itemId } = req.body;
+        const { itemId, quantity } = req.body;
         const userId = req.userId;
         const cartId = await getOrCreateCart(userId);
 
@@ -223,14 +223,14 @@ const addToCart = async (req, res) => {
         if (existing.length > 0) {
             await runQuery(
                 pool,
-                'UPDATE order_items SET quantity = quantity + 1 WHERE order_id = ? AND item_id = ?',
-                [cartId, itemId]
+                'UPDATE order_items SET quantity = quantity + ? WHERE order_id = ? AND item_id = ?',
+                [quantity, cartId, itemId]
             );
         } else {
             await runQuery(
                 pool,
-                'INSERT INTO order_items (order_id, item_id, quantity, unit_price) VALUES (?, ?, 1, (SELECT price FROM items WHERE id = ?))',
-                [cartId, itemId, itemId]
+                'INSERT INTO order_items (order_id, item_id, quantity, unit_price) VALUES (?, ?, ?, (SELECT price FROM items WHERE id = ?))',
+                [cartId, itemId, quantity, itemId]
             );
         }
 
@@ -342,6 +342,49 @@ const deliverOrder = async (req, res) => {
     }
 };
 
+const rateItem = async (req, res) => {
+    try {
+        // so for legitimate reviews, we count the no of products ordered by the current user.
+        // obv if it is > 0 then the userhas atleast once bought that item
+        const { itemId, rating } = req.body;
+        const count = await runQuery(
+            pool,
+            `
+            SELECT COUNT(*) AS count
+            FROM orders o
+            JOIN order_items oi ON oi.order_id = o.id
+            WHERE oi.item_id = ? AND o.user_id = ? AND o.status = 'delivered';
+            `,
+            [itemId, req.userId]
+        );
+        if (count[0].count === 0) {
+            return res.status(400).json({ success:false, msg:"Have some shame. You are reviewing an item which you didn't even bought. No wonder you are a brokie."})
+        }
+        const reviewed = await runQuery(
+            pool,
+            `
+            SELECT COUNT(*) AS reviewed
+            FROM reviews
+            WHERE user_id = ? AND item_id = ?;            
+            `,
+            [req.userId, itemId]
+        );
+        console.log(reviewed)
+        if (reviewed[0].reviewed > 0) {
+            return res.status(400).json({ success: false, msg: "You've already submitted a review for this item." });
+        }
+        await runQuery(
+        pool,
+        'INSERT INTO reviews (user_id, item_id, rating) VALUES (?, ?, ?)',
+        [req.userId, itemId, rating]
+        );
+        return res.status(201).json({ success:true, msg:"Your review ws submitted!"});
+    } catch (error) {
+        console.error('rateItem error:', error);
+        return res.status(500).json({ success: false, msg: 'Internal server error.' });
+    }
+}
+
 module.exports = {
     getOrderByUserId,
     getCartByUserId,
@@ -354,5 +397,6 @@ module.exports = {
     addToCart,
     placeOrder,
     cancelOrder,
-    deliverOrder
+    deliverOrder,
+    rateItem
 };

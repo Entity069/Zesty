@@ -8,6 +8,7 @@ const pageRoutes = require('./routes/pages');
 const orderRoutes = require('./routes/order');
 const userRoutes = require('./routes/user');
 const adminRoutes = require('./routes/admin');
+const sellerRoutes = require('./routes/seller');
 
 const humanize = require('./controllers/utils/humanize');
 
@@ -27,6 +28,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/seller', sellerRoutes);
 
 app.get('/test', (req, res) => {
     res.render('user/mycart');    

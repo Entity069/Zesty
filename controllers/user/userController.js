@@ -56,7 +56,6 @@ const updateDetails = async (req, res) => {
 
     try {
         const { first_name, last_name, email, addr, currPwd, newPwd } = req.body;
-        const profilePicture = req.file;
         const users = await runQuery(
             pool,
             'SELECT * from users where id = ?',
@@ -76,7 +75,7 @@ const updateDetails = async (req, res) => {
 
         const is_verified = users[0].email === email ? 1 : 0;
         const password = await bcrypt.hash(newPwd ? newPwd : currPwd, 10);
-        const profile_pic = profilePicture ? '/uploads/profile-pics/' + profilePicture.filename : users[0].profile_pic;
+        const profile_pic = req.file ? `/uploads/profile-pics/${req.file.filename}` : users[0].profile_pic;
 
         if (!is_verified){
             try {

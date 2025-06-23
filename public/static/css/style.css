@@ -126,6 +126,16 @@ body {
   border-color: var(--primary-orange);
 }
 
+.star-rating i {
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #ccc;
+}
+
+.star-rating i.fas {
+  color: #ffc107;
+}
+
 .food-card {
   border-radius: 16px;
   border: 1px solid var(--bs-border-color);
