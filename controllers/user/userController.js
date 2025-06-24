@@ -64,7 +64,7 @@ const updateDetails = async (req, res) => {
 
         if (users.length === 0 ) {
             deleteFile();
-            return res.status(401).redirect('/register');
+            return res.status(400).json({success:false, msg: 'User does not exists!'});
         }
 
         const isValidPassword = await bcrypt.compare(currPwd, users[0].password);

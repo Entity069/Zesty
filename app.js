@@ -31,7 +31,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/seller', sellerRoutes);
 
 app.get('/test', (req, res) => {
-    res.render('user/mycart');    
+    res.render('seller/manage-item');    
 });
 
 const PORT = 80;

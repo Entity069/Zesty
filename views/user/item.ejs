@@ -66,7 +66,9 @@
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="rating">
                                         <i class="fas fa-star"></i>
-                                        <span id="averageRating"><%= item.rating %></span>
+                                        <span id="avg-rating">
+                                            <%= item.rating %>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -168,7 +170,8 @@
                                         <i class="far fa-star" data-rating="5"></i>
                                         <input type="hidden" id="rating-value" name="rating">
                                     </div>
-                                    <button type="button" class="btn btn-primary" id="submit-rating-btn">Submit Rating</button>
+                                    <button type="button" class="btn btn-primary" id="submit-rating-btn">Submit
+                                        Rating</button>
                                 </div>
                             </div>
                         </div>
@@ -274,7 +277,7 @@
                     }
 
                     const originalText = submitBtn.innerHTML;
-                    
+
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
 
@@ -286,11 +289,11 @@
                         });
 
                         const data = await response.json();
-                        
+
                         if (data.success) {
                             shwSucc('Rating Submitted', data.msg);
                             setTimeout(() => {
-                               location.reload();
+                                location.reload();
                             }, 1500);
                         } else {
                             shwErr('Submission Failed', data.msg);

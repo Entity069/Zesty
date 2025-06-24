@@ -83,15 +83,15 @@ const itemDetails = async (req, res) => {
         pool,
         `
         SELECT
-        i.id               AS id,
-        i.name             AS name,
-        i.image            AS image,
-        i.description      AS description,
-        i.price            AS price,
-        i.status           AS status,
-        u.first_name       AS fname,
-        u.last_name        AS lname,
-        c.name             AS cname,
+            i.id               AS id,
+            i.name             AS name,
+            i.image            AS image,
+            i.description      AS description,
+            i.price            AS price,
+            i.status           AS status,
+            u.first_name       AS fname,
+            u.last_name        AS lname,
+            c.name             AS cname,
         ROUND(COALESCE(AVG(r.rating), 0), 1)      AS rating
         FROM items      AS i
         INNER JOIN users      AS u ON i.seller_id   = u.id
@@ -99,9 +99,9 @@ const itemDetails = async (req, res) => {
         LEFT  JOIN reviews    AS r ON r.item_id     = i.id
         WHERE i.id = ?
         GROUP BY
-        i.id, i.name, i.image, i.description, i.price, i.status, i.created_at,
-        u.id, u.first_name, u.last_name,
-        c.id, c.name, c.description;
+            i.id, i.name, i.image, i.description, i.price, i.status, i.created_at,
+            u.id, u.first_name, u.last_name,
+            c.id, c.name, c.description;
         `,
         [itemId]
     );

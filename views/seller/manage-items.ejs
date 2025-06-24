@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+    <%- include('../partial/head', {title: 'Manage Items | Zesty' }); %>
+</head>
+
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <%- include('../partial/toasts'); %>
+    </div>
+
+    <div class="sidebar p-3" id="sidebar">
+        <%- include('../partial/sidebar'); %>
+    </div>
+
+    <div class="main-content">
+        <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
+            <%- include('../partial/header'); %>
+        </header>
+
+        <div class="container-fluid p-4">
+            <div class="food-card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Rating</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="items-table">
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">Loading…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="no-items" class="text-center py-5 d-none">
+                <i class="fas fa-utensils fs-1 text-muted mb-3"></i>
+                <h4 class="text-muted">No items found</h4>
+                <p class="text-muted">Start by adding your first menu item</p>
+                <a href="/add-items" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add First Item
+                </a>
+            </div>
+
+            <div id="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-3 text-muted">Loading your items…</p>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partial/scripts'); %>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', async function () {
+                let allItems = [];
+
+                try {
+                    const response = await fetch('/api/seller/all-items', {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        allItems = data.items;
+                        shwSucc('Items Loaded', data.msg);
+                    } else {
+                        shwErr('Error', data.msg);
+                    }
+                } catch (error) {
+                    shwErr('Error', 'Something went wrong. Please try again.');
+                } finally {
+                    document.getElementById('loading').classList.add('d-none');
+                    render(allItems);
+                }
+
+                function render(items) {
+                    const tbody = document.getElementById('items-table');
+                    const noItems = document.getElementById('no-items');
+
+                    if (!items || items.length === 0) {
+                        noItems.classList.remove('d-none');
+                        tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">No items found</td></tr>`;
+                        return;
+                    }
+
+                    noItems.classList.add('d-none');
+                    tbody.innerHTML = items.map(item => `
+                    <tr class="align-middle text-center">
+                        <td>
+                            <img src="${item.image}" alt="${item.name}" class="rounded-2" style="width: 120px; height: 80px; object-fit: cover;">
+                        </td>
+                        <td><strong>${item.name}</strong></td>
+                        <td class="text-muted small">${item.description}</td>
+                        <td><span class="badge bg-info">${item.cname}</span></td>
+                        <td>₹ ${parseFloat(item.price).toFixed(2)}</td>
+                        <td>
+                            <span class="badge ${item.status === 'available' ? 'bg-success' : 'bg-danger'}">
+                                ${item.status}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rating">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <span id="avg-rating">${item.rating ?? 'N/A'}</span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <button class="btn btn-outline-primary btn-sm" onclick="window.location.href = '/edit-items?id=${item.id}'">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                }
+            });
+        </script>
+</body>
+
+</html>
