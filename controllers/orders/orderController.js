@@ -149,6 +149,36 @@ async function getOrCreateCart(userId) {
     return result.insertId;
 };
 
+async function syncOrderStatus(id) {
+
+  const rows = await runQuery(
+    pool,
+    'SELECT status FROM order_items WHERE order_id = ?',
+    [id]
+  );
+  console.log(rows);
+  const statuses = rows.map(r => r.status);
+
+  let nstatus;
+  if (statuses.every(s => s === 'ordered')) {
+    nstatus = 'ordered';
+  } else if (statuses.every(s => s === 'preparing')) {
+    nstatus = 'preparing';
+  } else if (statuses.every(s => s === 'prepared')) {
+    nstatus = 'prepared';
+  } else if (statuses.includes('preparing')) {
+    nstatus = 'preparing';
+  } else {
+    nstatus = 'ordered';
+  };
+  console.log(nstatus)
+  await runQuery(
+    pool,
+    'UPDATE orders SET status = ? WHERE id = ?',
+    [nstatus, id]
+  );
+}
+
 // api views
 
 const updateOrderItemCount = async (req, res) => {
@@ -392,6 +422,7 @@ module.exports = {
     getAllItems,
     getAllOrders,
     getOrCreateCart,
+    syncOrderStatus,
     
     updateOrderItemCount,
     addToCart,

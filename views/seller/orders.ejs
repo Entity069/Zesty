@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+    <%- include('../partial/head', {title: 'Orders | Zesty' }); %>
+</head>
+
+<body>
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <%- include('../partial/toasts'); %>
+    </div>
+
+    <div class="sidebar p-3" id="sidebar">
+        <%- include('../partial/sidebar'); %>
+    </div>
+
+    <div class="main-content">
+        <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
+            <%- include('../partial/header'); %>
+        </header>
+
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <select class="form-select" id="status-filter" style="max-width: 200px;">
+                        <option value="">All Orders</option>
+                        <option value="ordered">Ordered</option>
+                        <option value="preparing">Preparing</option>
+                        <option value="prepared">Prepared</option>
+                        <option value="delivered">Delivered</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="orders-list"></div>
+
+            <div id="no-orders" class="text-center py-5 d-none">
+                <i class="fas fa-shopping-bag fs-1 text-muted mb-3"></i>
+                <h4 class="text-muted">No orders found</h4>
+                <p class="text-muted">New orders will appear here</p>
+            </div>
+
+            <div id="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-3 text-muted">Loading orders...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="order-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Order Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modal-content"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partial/scripts'); %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                let orders = [];
+                const sf = document.getElementById('status-filter');
+                const modal = new bootstrap.Modal(document.getElementById('order-modal'));
+
+                (async () => {
+                    try {
+                        const response = await fetch('/api/seller/current-orders', {
+                            method: 'GET',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        const data = await response.json();
+
+                        if (data.success) {
+                            orders = data.orders;
+                            shwSucc('Orders Fetched.', data.msg);
+                        } else {
+                            shwErr('Orders were not fetched.', data.msg);
+                        }
+
+                    } catch (err) {
+                        shwErr('Error', 'Something went wrong. Please try again.');
+                    } finally {
+                        document.getElementById('loading').classList.add('d-none');
+                        render();
+                    }
+                })();
+
+                function render() {
+                    const s = sf.value;
+                    const filtered = orders.filter(o => !s || o.status === s);
+
+                    const list = document.getElementById('orders-list');
+                    const noOrders = document.getElementById('no-orders');
+
+                    if (filtered.length === 0) {
+                        list.innerHTML = '';
+                        noOrders.classList.remove('d-none');
+                        return;
+                    }
+
+                    noOrders.classList.add('d-none');
+                    list.innerHTML = filtered.map(o => {
+                        const total = o.my_items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
+                        const summ = o.my_items.map(item => `${item.quantity}× ${item.name}`).join(', ');
+
+                        return `
+                        <div class="food-card mb-4">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <h6 class="fw-bold mb-0 me-3">Order #${o.id}</h6>
+                                            <span class="badge bg-${statColor(o.status)} rounded-pill me-2">${o.status}</span>
+                                            <small class="text-muted">${o.created_at}</small>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <h6 class="fw-semibold mb-1">Customer</h6>
+                                                <p class="mb-1">${o.cfname} ${o.clname}</p>
+                                                <small class="text-muted">${o.cemail}</small>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6 class="fw-semibold mb-1">Address</h6>
+                                                <p class="text-muted small mb-0">${o.caddr}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <h6 class="fw-semibold mb-2">Items (${o.my_items.length})</h6>
+                                            <div class="text-muted small">${summ}</div>
+                                        </div>
+
+                                        ${o.message ? `
+                                            <div class="mb-3">
+                                                <h6 class="fw-semibold mb-1">Message</h6>
+                                                <p class="text-muted small mb-0">${o.message}</p>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                        <div class="text-center mb-3">
+                                            <h5 class="fw-bold text-primary mb-1">₹${total}</h5>
+                                            <small class="text-muted">Total Amount</small>
+                                        </div>
+                                        
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary view-order-btn" data-id="${o.id}">
+                                                <i class="fas fa-eye me-1"></i>View Items
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    }).join('');
+
+                    document.querySelectorAll('.view-order-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const orderId = btn.dataset.id;
+                            const order = orders.find(o => o.id == orderId);
+                            shwModal(order);
+                        });
+                    });
+                }
+
+                function shwModal(o) {
+                    const total = o.my_items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
+
+                    document.getElementById('modal-content').innerHTML = `
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Order #${o.id}</h6>
+                            <p class="mb-1"><strong>Customer:</strong> ${o.cfname} ${o.clname}</p>
+                            <p class="mb-1"><strong>Email:</strong> ${o.cemail}</p>
+                            <p class="mb-1"><strong>Status:</strong> <span class="badge bg-${statColor(o.status)}">${o.status}</span></p>
+                            <p class="mb-1"><strong>Date:</strong> ${(o.created_at)}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Address:</strong></p>
+                            <p class="text-muted">${o.caddr}</p>
+                            ${o.message ? `
+                                <p class="mb-1"><strong>Message:</strong></p>
+                                <p class="text-muted">${o.message}</p>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <h6 class="fw-bold mb-3">Items</h6>
+                    <div class="row">
+                        ${o.my_items.map(item => `
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100">
+                                    <div class="row g-0 h-100">
+                                        <div class="col-4">
+                                            <img src="${item.image}" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="${item.name}">
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="card-body d-flex flex-column h-100">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="card-title mb-1">${item.name}</h6>
+                                                    <p class="card-text">
+                                                        <strong>Qty:</strong> ${item.quantity}<br>
+                                                        <strong>Price:</strong> ₹${item.unit_price}<br>
+                                                        <strong>Total:</strong> ₹${item.unit_price * item.quantity}
+                                                    </p>
+                                                </div>
+                                                <div class="mt-auto">
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <span class="badge bg-${statColor(item.item_status)}">${item.item_status}</span>
+                                                        ${itmBtn(item)}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="text-end">
+                                <h5><strong>Total: ₹ ${total}</strong></h5>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                    document.querySelectorAll('.item-status-btn').forEach(btn => {
+                        btn.addEventListener('click', async () => {
+                            const id = btn.dataset.itemId;
+
+                            try {
+                                const res = await fetch('/api/seller/current-orders/update', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ id })
+                                });
+                                const data = await res.json();
+
+                                if (data.success) {
+                                    shwSucc('Status Updated', data.msg);
+                                    setTimeout(() => {
+                                        location.reload()
+                                    }, 1500);
+                                } else {
+                                    shwErr('Update Failed', data.msg);
+                                }
+                            } catch (err) {
+                                shwErr('Error', err);
+                            }
+                        });
+                    });
+
+                    modal.show();
+                }
+
+                function statColor(status) {
+                    switch (status) {
+                        case 'ordered': return 'info';
+                        case 'preparing': return 'warning';
+                        case 'prepared': return 'primary';
+                        default: return 'success';
+                    }
+                }
+
+                function itmBtn(item) {
+                    if (item.item_status === 'ordered') {
+                        return `<button class="btn btn-sm btn-outline-info item-status-btn" data-item-id="${item.item_id}" data-status="preparing">Start Preparing</button>`;
+                    } else if (item.item_status === 'preparing') {
+                        return `<button class="btn btn-sm btn-outline-success item-status-btn" data-item-id="${item.item_id}" data-status="prepared">Mark Prepared</button>`;
+                    } else if (item.item_status === 'prepared') {
+                        return `<button class="btn btn-sm btn-success" disabled><i class="fas fa-check"></i> Ready</button>`;
+                    } else {
+                        return `<span class="badge bg-secondary">${item.item_status}</span>`;
+                    }
+                }
+
+                sf.addEventListener('change', render);
+            });
+        </script>
+</body>
+
+</html>
