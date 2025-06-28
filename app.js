@@ -34,7 +34,7 @@ app.get('/test', (req, res) => {
     res.render('seller/manage-item');    
 });
 
-const PORT = 80;
+const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

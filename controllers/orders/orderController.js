@@ -27,7 +27,7 @@ async function getOrderByUserId(id) {
     FROM orders o
     LEFT JOIN order_items oi ON oi.order_id = o.id
     LEFT JOIN items i        ON i.id        = oi.item_id
-    WHERE o.user_id = ? AND O.status <> 'cart'
+    WHERE o.user_id = ? AND o.status <> 'cart'
     GROUP BY o.id
     ORDER BY o.created_at DESC;
     `,
@@ -61,7 +61,7 @@ async function getCartByUserId(id) {
     FROM orders o
     LEFT JOIN order_items oi ON oi.order_id = o.id
     LEFT JOIN items i        ON i.id        = oi.item_id
-    WHERE o.user_id = ? AND O.status = 'cart'
+    WHERE o.user_id = ? AND o.status = 'cart'
     GROUP BY o.id
     ORDER BY o.created_at DESC;
     `,
