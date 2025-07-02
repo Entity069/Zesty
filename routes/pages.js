@@ -25,9 +25,9 @@ router.get('/all-orders', authMiddlewares.verifyToken, authMiddlewares.loginRequ
 router.get('/all-users', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllUsers);
 router.get('/all-categories', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllCategories);
 
+router.get('/seller/dashboard', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.dashboard);
 router.get('/add-items', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.addItems);
 router.get('/manage-items', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.manageItems);
 router.get('/edit-items', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.editItems);
-router.get('/current-orders', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.ordersDashboard);
 
 module.exports = router;

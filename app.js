@@ -31,10 +31,9 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/seller', sellerRoutes);
 
 app.get('/test', (req, res) => {
-    res.render('seller/manage-item');    
+    res.render('seller/dashboard');    
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(process.env.PORT, () => {
+    console.log(`Server is running at http://${process.env.SITE_NAME}`);
 });

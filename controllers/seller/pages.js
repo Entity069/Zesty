@@ -4,7 +4,7 @@ const { getAllCategories } = require('../orders/orderController')
 const JWT_SECRET = process.env.JWT_SECRET || 'thisisnotaproductionkey';
 
 
-const ordersDashboard = async (req, res) => {
+const dashboard = async (req, res) => {
     const users = await runQuery(
         pool,
         'SELECT * FROM users WHERE id = ?',
@@ -15,7 +15,7 @@ const ordersDashboard = async (req, res) => {
     }
 
     const user = users[0];
-    res.render('seller/orders', { user: user })
+    res.render('seller/dashboard', { user: user })
 }
 
 const addItems = async (req, res) => {
@@ -89,7 +89,7 @@ const editItems = async (req, res) => {
 
 
 module.exports = {
-    ordersDashboard,
+    dashboard,
     addItems,
     manageItems,
     editItems
