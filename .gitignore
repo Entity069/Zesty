@@ -1,4 +1,6 @@
-.env
-node_modules/
+db/.env
+backend/.env
+backend/node_modules/
+backend/public/uploads/
 TODO.md
-public/uploads/
+db/data.sql
