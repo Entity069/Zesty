@@ -54,9 +54,7 @@ const roleRequired = (role) => (req, res, next) => {
   try {
     const data = jwt.verify(token, JWT_SECRET);
     if (data.role !== role) {
-      return res.status(403).render('error', {
-        message: `Access denied. ${role.charAt(0).toUpperCase() + role.slice(1)}s only.`
-      });
+      return res.status(403).render('error');
     }
     req.user = data;
     next();
@@ -66,6 +64,7 @@ const roleRequired = (role) => (req, res, next) => {
   }
 };
 
+const userRequired = roleRequired('user');
 const adminRequired = roleRequired('admin');
 const sellerRequired = roleRequired('seller');
 
@@ -73,6 +72,7 @@ module.exports = {
   verifyToken,
   redirectIfIn,
   loginRequired,
+  userRequired,
   adminRequired,
   sellerRequired
 };
