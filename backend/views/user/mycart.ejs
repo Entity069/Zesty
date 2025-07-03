@@ -25,7 +25,7 @@
                 <div class="col-lg-8">
                     <% if (cart !==null) { %>
                         <div id="cart-items">
-                            <% cart.items_json.forEach(item => { %>
+                            <% cart.items_json.forEach(item=> { %>
                                 <div class="cart-item mb-3" data-id="<%= item.id %>"
                                     data-price="<%= item.unit_price %>">
                                     <div class="row align-items-center">
@@ -42,7 +42,7 @@
                                             </p>
                                         </div>
                                         <div class="col-md-2">
-                                            <span class="fw-bold text-orange">₹ <%= item.unit_price %></span>
+                                            <span class="fw-bold text-orange intcomma">₹ <%= item.unit_price %></span>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="quantity-controls d-flex align-items-center">
@@ -81,8 +81,8 @@
                         <div class="mb-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Subtotal</span>
-                                <span id="subtotal">₹ <%= (cart && cart.total_amount) ?
-                                        humanize.intcomma(cart.total_amount) : '0.00' %></span>
+                                <span id="subtotal" class="intcomma">₹ <%= (cart && cart.total_amount) ?
+                                        (cart.total_amount) : '0.00' %></span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Discount</span>
@@ -91,8 +91,8 @@
                             <hr>
                             <div class="d-flex justify-content-between fw-bold">
                                 <span>Total</span>
-                                <span class="text-orange" id="total">₹ <%= (cart && cart.total_amount) ?
-                                        humanize.intcomma(cart.total_amount) : '0.00' %></span>
+                                <span class="text-orange intcomma" id="total">₹ <%= (cart && cart.total_amount) ?
+                                        (cart.total_amount) : '0.00' %></span>
                             </div>
                         </div>
 
@@ -127,8 +127,8 @@
 
                     const total = subtotal.toFixed(2);
 
-                    subtotalElement.textContent = `₹ ${total}`;
-                    totalElement.textContent = `₹ ${total}`;
+                    subtotalElement.textContent = `₹ ${intcomma(total)}`;
+                    totalElement.textContent = `₹ ${intcomma(total)}`;
                 };
 
                 const shwEmpty = () => {
@@ -214,6 +214,10 @@
                         console.error('Error removing item:', error);
                     }
                 };
+
+                document.querySelectorAll('.intcomma').forEach(el => {
+                    el.textContent = `₹ ${intcomma(el.textContent.replace('₹', '').trim())}`;
+                });
 
                 checkoutBtn.addEventListener('click', placeOrder);
             });

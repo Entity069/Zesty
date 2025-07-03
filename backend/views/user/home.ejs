@@ -39,66 +39,84 @@
                     </div>
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h5 class="fw-bold mb-0">Category</h5>
-                        <a href="#" class="text-decoration-none fw-semibold" style="color: var(--primary-orange);">View
-                            all</a>
                     </div>
 
-                    <div class="row g-3 mb-5">
-                        <div class="col-6 col-md-2">
-                            <div class="category-card text-center h-100">
-                                <img src="https://placehold.co/60x60/CD853F/white?text=C" alt="Chicken" class="mb-2">
-                                <h6 class="small fw-semibold mb-0">Chicken</h6>
+                    <div class="d-flex overflow-x-auto pb-2 mb-2 px-2 pt-2" style="gap: 1rem;">
+                        <% categories.forEach(category => { %>
+                            <div class="flex-shrink-0" style="min-width: 120px;">
+                                <div class="category-card text-center h-100">
+                                    <img src="https://placehold.co/60x60/<%= Math.floor(Math.random()*16777215).toString(16).padStart(6,'0') %>/white?text=<%= (t=category.name.split(' '), t.length>1? t[0][0]+t[t.length-1][0] : t[0][0]) %>"
+                                        alt="<%= category.name %>" class="mb-2">
+                                    <h6 class="small fw-semibold mb-0">
+                                        <%= category.name %>
+                                    </h6>
+                                </div>
                             </div>
-                        </div>
+                        <% }); %>
                     </div>
 
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h5 class="fw-bold mb-0">Popular Dishes</h5>
-                        <a href="#" class="text-decoration-none fw-semibold" style="color: var(--primary-orange);">View
+                        <a href="/search" class="text-decoration-none fw-semibold" style="color: var(--primary-orange);">View
                             all</a>
                     </div>
                     <div class="row g-4 mb-5">
-                        <div class="col-lg-4 col-md-6">
-                            <div class="food-card position-relative h-100">
-                                <img src="https://placehold.co/300x200/32CD32/white?text=Chicken+Burger"
-                                    class="card-img-top" alt="Chicken Burger">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="rating me-2">
-                                            <i class="fas fa-star me-1"></i>4.7
+                        <% items.forEach(item=> { %>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="food-card position-relative h-100">
+                                    <img src="<%= item.image %>" class="card-img-top" alt="<%= item.name %>">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="rating me-2">
+                                                <i class="fas fa-star me-1"></i>
+                                                <%= item.rating %>
+                                            </div>
                                         </div>
-                                        <small class="text-muted">(89+ Reviews)</small>
-                                    </div>
-                                    <h6 class="card-title fw-bold">Chicken Burger</h6>
-                                    <p class="text-muted small mb-3">Tender Chicken with special sauce</p>
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <h6 class="fw-bold mb-0" style="color: var(--primary-orange);">$7.49</h6>
-                                        <button class="btn btn-primary btn-sm add-to-cart" data-id="Chicken-burger"
-                                            data-name="Chicken Burger" data-price="7.49">
+                                        <h6 class="card-title fw-bold">
+                                            <%= item.name %>
+                                        </h6>
+                                        <p class="text-muted small mb-3">
+                                            <%= item.description %>
+                                        </p>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <h6 class="fw-bold mb-0 intcomma" style="color: var(--primary-orange);">₹ <%=
+                                                    item.price %>
+                                            </h6>
+                                            <button class="btn btn-primary btn-sm orenj-plus-button"
+                                                data-id="<%= item.id %>"
+                                                data-name="<%= item.name %>"
+                                                data-price="<%= item.price %>"
+                                                data-image="<%= item.image %>">
                                             <i class="fas fa-plus"></i>
-                                        </button>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            <% }); %>
                     </div>
 
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h5 class="fw-bold mb-0">Recent Order</h5>
-                        <a href="#" class="text-decoration-none fw-semibold" style="color: var(--primary-orange);">View
+                        <a href="/my-orders" class="text-decoration-none fw-semibold" style="color: var(--primary-orange);">View
                             all</a>
                     </div>
                     <div class="row g-4">
-                        <div class="col-lg-4 col-md-6">
-                            <div class="food-card position-relative">
-                                <img src="https://placehold.co/300x200/228B22/white?text=Veggie+Bowl"
-                                    class="card-img-top" alt="Veggie Bowl">
-                                <div class="card-body">
-                                    <h6 class="card-title fw-bold">Veggie Bowl</h6>
-                                    <p class="text-muted small mb-0">Fresh vegetables and quinoa</p>
+                        <% recents.forEach(order=> { %>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="food-card position-relative">
+                                    <img src="<%= order.image %>" class="card-img-top" alt="<%= order.name %>">
+                                    <div class="card-body">
+                                        <h6 class="card-title fw-bold">
+                                            <%= order.name %>
+                                        </h6>
+                                        <p class="text-muted small mb-0">
+                                            <%= order.description %>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <% }); %>
                     </div>
                 </div>
 
@@ -113,7 +131,7 @@
                         </div>
                         <div class="bg-warning bg-opacity-10 rounded-3 p-3 mb-4">
                             <div class="d-flex align-items-center justify-content-between">
-                                <span class="fw-bold">₹ <%= humanize.intcomma(user.balance) %></span>
+                                <span class="fw-bold intcomma">₹<%= (user.balance) %></span>
                                 <i class="fas fa-wallet text-warning"></i>
                             </div>
                         </div>
@@ -130,31 +148,6 @@
                             <button class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal"
                                 data-bs-target="#edit-addr">Edit address</button>
                         </div>
-                        <h6 class="fw-bold mb-3">Order Menu</h6>
-                        <div id="order-items">
-                            <div class="d-flex align-items-center mb-4 p-2 rounded-2 bg-light bg-opacity-50">
-                                <img src="https://placehold.co/50x50/32CD32/white?text=🍔" alt="Fish Burger & Vegs"
-                                    class="rounded me-3">
-                                <div class="flex-grow-1">
-                                    <h6 class="small fw-semibold mb-1">Fish Burger & Vegs</h6>
-                                </div>
-                                <span class="badge bg-secondary rounded-pill">1</span>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Discount</span>
-                                <span>-$6.9</span>
-                            </div>
-                            <div class="d-flex justify-content-between fw-bold">
-                                <span>Total</span>
-                                <span style="color: var(--primary-orange);" id="totalAmount">$69.420</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary w-100 mb-3">
-                            <i class="fas fa-shopping-cart me-2"></i>Order Now
-                        </button>
                     </div>
                 </div>
             </div>
@@ -195,8 +188,7 @@
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="pay-method" id="Gpay"
-                                    value="Gpay">
+                                <input class="form-check-input" type="radio" name="pay-method" id="Gpay" value="Gpay">
                                 <label class="form-check-label" for="Gpay">
                                     <i class="fab fa-paypal me-2"></i>Gpay
                                 </label>
@@ -236,83 +228,111 @@
         </div>
     </div>
     <%- include('../partial/scripts'); %>
-    <script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                setTheme();
+                document.getElementById('add-balance-btn').addEventListener('click', async function () {
+                    const balance = document.getElementById('balance-amt').value;
+                    console.log(balance);
 
-        document.addEventListener('DOMContentLoaded', function () {
-            setTheme();
-
-            document.getElementById('add-balance-btn').addEventListener('click', async function () {
-                const balance = document.getElementById('balance-amt').value;
-                console.log(balance);
-
-                if (!balance || balance <= 0) {
-                    shwErr('Invalid Amount', 'Please enter a valid amount');
-                    return;
-                }
-
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
-                this.disabled = true;
-
-                try {
-                    const response = await fetch('/api/user/update-balance', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ balance })
-                    });
-
-                    const data = await response.json();
-                    if (data.success) {
-                        shwSucc('Balance Added', data.msg);
-                        document.querySelector('.bg-warning .fw-bold').textContent = `$${data.newBalance}`;
-                        bootstrap.Modal.getInstance(document.getElementById('add-balance')).hide();
-                        document.getElementById('add-balance-form').reset();
-                    } else {
-                        shwErr('Payment Failed', data.msg);
+                    if (!balance || balance <= 0) {
+                        shwErr('Invalid Amount', 'Please enter a valid amount');
+                        return;
                     }
-                } catch (error) {
-                    shwErr('Payment Failed', 'Could not process payment. Please try again.');
-                } finally {
-                    this.innerHTML = originalText;
-                    this.disabled = false;
-                }
-            });
 
-            document.getElementById('save-addr').addEventListener('click', async function () {
-                addr = document.getElementById('address').value;
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+                    this.disabled = true;
 
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
-                this.disabled = true;
+                    try {
+                        const response = await fetch('/api/user/update-balance', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ balance })
+                        });
 
-                try {
-                    const response = await fetch('/api/user/update-address', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ addr })
-                    });
-
-                    const data = await response.json();
-                    if (data.success) {
-                        shwSucc('Address Updated', data.msg);
-
-                        const addrDis = document.getElementsByClassName('text-muted d-block');
-                        addrDis.innerText = `${addr}`;
-                            
-                        bootstrap.Modal.getInstance(document.getElementById('edit-addr')).hide();
-                    } else {
-                        shwErr('Update Failed', data.msg);
+                        const data = await response.json();
+                        if (data.success) {
+                            shwSucc('Balance Added', data.msg);
+                            document.querySelector('.bg-warning .fw-bold').textContent = `₹${data.newBalance}`;
+                            bootstrap.Modal.getInstance(document.getElementById('add-balance')).hide();
+                            document.getElementById('add-balance-form').reset();
+                        } else {
+                            shwErr('Payment Failed', data.msg);
+                        }
+                    } catch (error) {
+                        shwErr('Payment Failed', 'Could not process payment. Please try again.');
+                    } finally {
+                        this.innerHTML = originalText;
+                        this.disabled = false;
                     }
-                } catch (error) {
-                    console.log(error);
-                    shwErr('Update Failed', 'Could not update address. Please try again.');
-                } finally {
-                    this.innerHTML = originalText;
-                    this.disabled = false;
-                }
+                });
+
+                document.getElementById('save-addr').addEventListener('click', async function () {
+                    const addr = document.getElementById('address').value;
+
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                    this.disabled = true;
+
+                    try {
+                        const response = await fetch('/api/user/update-address', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ addr })
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            shwSucc('Address Updated', data.msg);
+                            const addrDis = document.querySelector('.text-muted.d-block');
+                            addrDis.innerText = `${addr}`;
+                            bootstrap.Modal.getInstance(document.getElementById('edit-addr')).hide();
+                        } else {
+                            shwErr('Update Failed', data.msg);
+                        }
+                    } catch (error) {
+                        console.log(error);
+                        shwErr('Update Failed', 'Could not update address. Please try again.');
+                    } finally {
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                    }
+                });
+
+                document.querySelectorAll('.orenj-plus-button').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const itemId = btn.dataset.id;
+                        const itemName = btn.dataset.name;
+                        const itemPrice = btn.dataset.price;
+                        const itemImage = btn.dataset.image;
+
+                        try {
+                            const res = await fetch('/api/order/add-to-cart', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ itemId, quantity: 1 })
+                            });
+
+                            const data = await res.json();
+                            if (data.success) {
+                                shwSucc('Added to Cart', data.msg);
+                            } else {
+                                shwErr('Add Failed', data.msg);
+                            }
+                        } catch (err) {
+                            shwErr('Error', 'Something went wrong. Please try again.');
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.intcomma').forEach(el => {
+                    el.textContent = `₹ ${intcomma(el.textContent.replace('₹', '').trim())}`;
+                });
             });
-        });
-    </script>
+        </script>
 </body>
 
 </html>

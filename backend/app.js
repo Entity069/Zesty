@@ -10,10 +10,7 @@ const userRoutes = require('./routes/user');
 const adminRoutes = require('./routes/admin');
 const sellerRoutes = require('./routes/seller');
 
-const humanize = require('./controllers/utils/humanize');
-
 const app = express();
-app.locals.humanize = humanize;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

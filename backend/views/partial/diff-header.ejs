@@ -1,14 +1,9 @@
             <button class="btn sidebar-toggler" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
+            <i class="fas fa-bars"></i>
             </button>
-            <div class="flex-grow-1 mx-4">
-                <div class="position-relative">
-                    <form method="GET" action="/search">
-                        <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                        <input name="q" type="text" class="form-control search-box ps-5"
-                            placeholder="Search for food...">
-                    </form>
-                </div>
+
+            <div class="flex-grow-1 mx-4 d-flex align-items-center">
+            <h5 class="mb-0"><%= title %></h5>
             </div>
             <div class="d-flex align-items-center gap-3">
                 <div class="dropdown">

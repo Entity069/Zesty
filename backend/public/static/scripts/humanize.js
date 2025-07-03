@@ -177,12 +177,3 @@ function formatDate(date, format) {
     
     return format.replace(/YYYY|MM|DD|HH|mm|ss/g, match => map[match]);
 }
-
-module.exports = {
-    ordinal,
-    intcomma,
-    intword,
-    naturalday,
-    naturaltime,
-    formatDate
-};

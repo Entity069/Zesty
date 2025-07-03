@@ -157,7 +157,6 @@ const getSellerOrders = async (req, res) => {
             `,
             [req.userId]
         );
-        console.log(orders)
         return res.status(200).json({ success:true, msg:'All items fetched successfully!', orders:orders })
 
     } catch (error) {

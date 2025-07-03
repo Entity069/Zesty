@@ -20,7 +20,6 @@
         </header>
 
         <div class="container-fluid p-4">
-            <!-- Back button + Image & Details columns -->
             <div class="row align-items-center mb-4">
                 <div class="col-12 mb-3">
                     <button class="btn btn-outline-secondary" onclick="window.history.back()">
@@ -57,7 +56,7 @@
                             </div>
 
                             <div class="mb-4">
-                                <h3 class="text-orange fw-bold mb-0">₹ <%= item.price %>
+                                <h3 class="text-orange fw-bold mb-0 intcomma">₹ <%= item.price %>
                                 </h3>
                                 <small class="text-muted">per unit</small>
                             </div>
@@ -92,7 +91,7 @@
                                     <div class="col-md-6 text-md-end">
                                         <label class="form-label fw-semibold mb-3">Total Price</label>
                                         <div>
-                                            <span class="h4 text-orange fw-bold">
+                                            <span class="h4 text-orange fw-bold intcomma">
                                                 ₹ <span id="total-price">
                                                     <%= item.price %>
                                                 </span>
@@ -304,6 +303,11 @@
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = originalText;
                     }
+                });
+
+
+                document.querySelectorAll('.intcomma').forEach(el => {
+                    el.textContent = `₹ ${intcomma(el.textContent.replace('₹', '').trim())}`;
                 });
 
             });

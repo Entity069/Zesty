@@ -11,12 +11,12 @@
     </div>
 
     <div class="sidebar p-3" id="sidebar">
-        <%- include('../partial/sidebar'); %>
+        <%- include('../partial/seller_sidebar'); %>
     </div>
 
     <div class="main-content">
         <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
-            <%- include('../partial/header'); %>
+            <%- include('../partial/diff-header', {title: 'Dashboard' }); %>
         </header>
 
         <div class="container-fluid p-4">
@@ -30,7 +30,7 @@
                             </div>
                             <div>
                                 <h6 class="text-muted mb-1">Total Revenue</h6>
-                                <h4 class="fw-bold mb-0" id="total-revenue">₹ 0.00</h4>
+                                <h4 class="fw-bold mb-0 intcomma" id="total-revenue">₹<%= revenue.revenue %></h4>
                             </div>
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                             </div>
                             <div>
                                 <h6 class="text-muted mb-1">Total Orders</h6>
-                                <h4 class="fw-bold mb-0" id="total-orders">0</h4>
+                                <h4 class="fw-bold mb-0 intcomma" id="total-orders"><%= orders.orders %></h4>
                             </div>
                         </div>
                     </div>
@@ -57,8 +57,8 @@
                                 <i class="fas fa-users"></i>
                             </div>
                             <div>
-                                <h6 class="text-muted mb-1">Total Users</h6>
-                                <h4 class="fw-bold mb-0" id="total-users">0</h4>
+                                <h6 class="text-muted mb-1">Total Items</h6>
+                                <h4 class="fw-bold mb-0 intcomma" id="total-users"><%= items.items %></h4>
                             </div>
                         </div>
                     </div>
@@ -71,8 +71,8 @@
                                 <i class="fas fa-store"></i>
                             </div>
                             <div>
-                                <h6 class="text-muted mb-1">Active Sellers</h6>
-                                <h4 class="fw-bold mb-0" id="active-sellers">0</h4>
+                                <h6 class="text-muted mb-1">Users Catered</h6>
+                                <h4 class="fw-bold mb-0 intcomma" id="active-sellers"><%= catered.catered %></h4>
                             </div>
                         </div>
                     </div>
@@ -186,7 +186,7 @@
                                     <div class="d-flex align-items-center mb-3">
                                         <h6 class="fw-bold mb-0 me-3">Order #${o.id}</h6>
                                         <span class="badge bg-${statColor(o.status)} rounded-pill me-2">${o.status}</span>
-                                        <small class="text-muted">${o.created_at}</small>
+                                        <small class="text-muted">${formatDate(new Date(o.created_at), 'DD/MM/YYYY')}</small>
                                     </div>
                                     
                                     <div class="row mb-3">
@@ -216,7 +216,7 @@
                                 
                                 <div class="col-md-4">
                                     <div class="text-center mb-3">
-                                        <h5 class="fw-bold text-primary mb-1">₹${total}</h5>
+                                        <h5 class="fw-bold text-primary mb-1">₹${intcomma(total)}</h5>
                                         <small class="text-muted">Total Amount</small>
                                     </div>
                                     
@@ -251,7 +251,7 @@
                         <p class="mb-1"><strong>Customer:</strong> ${o.cfname} ${o.clname}</p>
                         <p class="mb-1"><strong>Email:</strong> ${o.cemail}</p>
                         <p class="mb-1"><strong>Status:</strong> <span class="badge bg-${statColor(o.status)}">${o.status}</span></p>
-                        <p class="mb-1"><strong>Date:</strong> ${(o.created_at)}</p>
+                        <p class="mb-1"><strong>Date:</strong> ${formatDate(new Date(o.created_at), 'DD/MM/YYYY')}</p>
                     </div>
                     <div class="col-md-6">
                         <p class="mb-1"><strong>Address:</strong></p>
@@ -278,8 +278,8 @@
                                                 <h6 class="card-title mb-1">${item.name}</h6>
                                                 <p class="card-text">
                                                     <strong>Qty:</strong> ${item.quantity}<br>
-                                                    <strong>Price:</strong> ₹${item.unit_price}<br>
-                                                    <strong>Total:</strong> ₹${item.unit_price * item.quantity}
+                                                    <strong>Price:</strong> ₹${intcomma(item.unit_price)}<br>
+                                                    <strong>Total:</strong> ₹${intcomma(item.unit_price * item.quantity)}
                                                 </p>
                                             </div>
                                             <div class="mt-auto">
@@ -299,7 +299,7 @@
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="text-end">
-                            <h5><strong>Total: ₹ ${total}</strong></h5>
+                            <h5><strong>Total: ₹ ${intcomma(total)}</strong></h5>
                         </div>
                     </div>
                 </div>
@@ -356,6 +356,9 @@
                 }
 
                 sf.addEventListener('change', render);
+                document.querySelectorAll('.intcomma').forEach(el => {
+                    el.textContent.includes('₹') && (el.textContent = `₹${intcomma(el.textContent.replace('₹','').trim())}`);
+                });
             });
         </script>
 </body>

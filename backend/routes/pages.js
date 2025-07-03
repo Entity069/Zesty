@@ -21,6 +21,7 @@ router.get('/my-profile', authMiddlewares.verifyToken, authMiddlewares.loginRequ
 router.get('/search', authMiddlewares.verifyToken, authMiddlewares.loginRequired, orderPages.search);
 router.get('/item', authMiddlewares.verifyToken, authMiddlewares.loginRequired, orderPages.itemDetails);
 
+router.get('/admin/dashboard', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.dashboard);
 router.get('/all-orders', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllOrders);
 router.get('/all-users', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllUsers);
 router.get('/all-categories', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllCategories);

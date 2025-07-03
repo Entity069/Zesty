@@ -11,12 +11,12 @@
     </div>
 
     <div class="sidebar p-3" id="sidebar">
-        <%- include('../partial/sidebar'); %>
+        <%- include('../partial/admin_sidebar'); %>
     </div>
 
     <div class="main-content">
         <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
-            <%- include('../partial/header'); %>
+            <%- include('../partial/diff-header', {title: 'Dashboard' }); %>
         </header>
 
         <div class="container-fluid p-4">
@@ -30,7 +30,7 @@
                             </div>
                             <div>
                                 <h6 class="text-muted mb-1">Total Revenue</h6>
-                                <h4 class="fw-bold mb-0" id="total-revenue">₹ 0.00</h4>
+                                <h4 class="fw-bold mb-0 intcomma" id="total-revenue">₹<%= revenue.revenue %></h4>
                             </div>
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                             </div>
                             <div>
                                 <h6 class="text-muted mb-1">Total Orders</h6>
-                                <h4 class="fw-bold mb-0" id="total-orders">0</h4>
+                                <h4 class="fw-bold mb-0 intcomma" id="total-orders"><%= orders.orders %></h4>
                             </div>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                             </div>
                             <div>
                                 <h6 class="text-muted mb-1">Total Users</h6>
-                                <h4 class="fw-bold mb-0" id="total-users">0</h4>
+                                <h4 class="fw-bold mb-0 intcomma" id="total-users"><%= userCount.userCount %></h4>
                             </div>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                             </div>
                             <div>
                                 <h6 class="text-muted mb-1">Active Sellers</h6>
-                                <h4 class="fw-bold mb-0" id="active-sellers">0</h4>
+                                <h4 class="fw-bold mb-0 intcomma" id="active-sellers"><%= sellers.sellers %></h4>
                             </div>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                             </div>
                             <div>
                                 <h6 class="text-muted mb-1">Total Items</h6>
-                                <h4 class="fw-bold mb-0" id="total-items">0</h4>
+                                <h4 class="fw-bold mb-0 intcomma" id="total-items"><%= items.items %></h4>
                             </div>
                         </div>
                     </div>
@@ -102,7 +102,7 @@
                             </div>
                             <div>
                                 <h6 class="text-muted mb-1">Categories</h6>
-                                <h4 class="fw-bold mb-0" id="total-categories">0</h4>
+                                <h4 class="fw-bold mb-0 intcomma" id="total-categories"><%= categories.categories %></h4>
                             </div>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                             </div>
                             <div>
                                 <h6 class="text-muted mb-1">Pending Orders</h6>
-                                <h4 class="fw-bold mb-0" id="pending-orders">0</h4>
+                                <h4 class="fw-bold mb-0 intcomma" id="pending-orders"><%= pOrder.pOrder %></h4>
                             </div>
                         </div>
                     </div>
@@ -129,8 +129,8 @@
                                 <i class="fas fa-chart-line"></i>
                             </div>
                             <div>
-                                <h6 class="text-muted mb-1">Total Ratings</h6>
-                                <h4 class="fw-bold mb-0" id="today-sales">0.00</h4>
+                                <h6 class="text-muted mb-1">Total Reviews</h6>
+                                <h4 class="fw-bold mb-0 intcomma" id="today-sales"><%= ratings.ratings %></h4>
                             </div>
                         </div>
                     </div>
@@ -196,6 +196,12 @@
     </div>
 
     <%- include('../partial/scripts'); %>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.intcomma').forEach(el => {
+            el.textContent.includes('₹') && (el.textContent = `₹ ${intcomma(el.textContent.replace('₹','').trim())}`);
+        });
+    });
+</script>
 </body>
-
 </html>
