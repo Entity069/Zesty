@@ -1,5 +1,4 @@
 db/.env
 backend/.env
 backend/node_modules/
-backend/public/uploads/
 TODO.md

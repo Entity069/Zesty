@@ -1,26 +1,5 @@
 // helper functions for humanizing data on the frontend
 
-function ordinal(value) {
-    try {
-        value = parseInt(value);
-    } catch (error) {
-        return value;
-    }
-    
-    if (isNaN(value) || value < 0) {
-        return String(value);
-    }
-    
-    if (value % 100 >= 11 && value % 100 <= 13) {
-        return `${value}th`;
-    }
-    
-    const lastDigit = value % 10;
-    const suffixes = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'];
-    
-    return `${value}${suffixes[lastDigit]}`;
-}
-
 function intcomma(value, separator = ',') {
     if (value === null || value === undefined) {
         return value;
@@ -38,20 +17,6 @@ function intcomma(value, separator = ',') {
     
     return (isNegative ? '-' : '') + withCommas + decimalPart;
 }
-
-const intwordConverters = [
-    [6, 'million'],
-    [9, 'billion'],
-    [12, 'trillion'],
-    [15, 'quadrillion'],
-    [18, 'quintillion'],
-    [21, 'sextillion'],
-    [24, 'septillion'],
-    [27, 'octillion'],
-    [30, 'nonillion'],
-    [33, 'decillion'],
-    [100, 'googol']
-];
 
 function intword(value) {
     try {
@@ -79,41 +44,6 @@ function intword(value) {
     }
     
     return value;
-}
-
-function naturalday(value, format = null) {
-    if (!(value instanceof Date)) {
-        try {
-            value = new Date(value);
-        } catch (error) {
-            return value;
-        }
-    }
-    
-    if (isNaN(value.getTime())) {
-        return value;
-    }
-    
-    const today = new Date();
-    const valueDate = new Date(value.getFullYear(), value.getMonth(), value.getDate());
-    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    
-    const diffTime = valueDate.getTime() - todayDate.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) {
-        return 'today';
-    } else if (diffDays === 1) {
-        return 'tomorrow';
-    } else if (diffDays === -1) {
-        return 'yesterday';
-    }
-
-    if (format) {
-        return formatDate(value, format);
-    }
-    
-    return value.toLocaleDateString();
 }
 
 function naturaltime(value) {
