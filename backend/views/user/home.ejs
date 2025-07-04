@@ -233,7 +233,6 @@
                 setTheme();
                 document.getElementById('add-balance-btn').addEventListener('click', async function () {
                     const balance = document.getElementById('balance-amt').value;
-                    console.log(balance);
 
                     if (!balance || balance <= 0) {
                         shwErr('Invalid Amount', 'Please enter a valid amount');
@@ -292,7 +291,6 @@
                             shwErr('Update Failed', data.msg);
                         }
                     } catch (error) {
-                        console.log(error);
                         shwErr('Update Failed', 'Could not update address. Please try again.');
                     } finally {
                         this.innerHTML = originalText;

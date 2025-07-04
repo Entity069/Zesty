@@ -11,7 +11,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'thisisnotaproductionkey';
 const updateAddr = async (req, res) => {
     try {
         const { addr } = req.body;
-        console.log(addr)
         await runQuery(
             pool,
             'UPDATE users SET address = ? WHERE id = ?',

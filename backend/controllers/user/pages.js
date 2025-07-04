@@ -85,7 +85,7 @@ const home = async (req, res) => {
 }
 
 const getUserOrders = async (req, res) => {
-    console.log(req.userId);
+    
     const orders = await getOrderByUserId(req.userId);
     const users = await runQuery(
         pool,
@@ -103,7 +103,6 @@ const getUserOrders = async (req, res) => {
 };
 
 const getUserCart = async (req, res) => {
-    console.log(req.userId);
     const cart = await getCartByUserId(req.userId);
     const users = await runQuery(
         pool,

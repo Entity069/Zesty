@@ -156,7 +156,6 @@ async function syncOrderStatus(id) {
     'SELECT status FROM order_items WHERE order_id = ?',
     [id]
   );
-  console.log(rows);
   const statuses = rows.map(r => r.status);
 
   let nstatus;
@@ -171,7 +170,6 @@ async function syncOrderStatus(id) {
   } else {
     nstatus = 'ordered';
   };
-  console.log(nstatus)
   await runQuery(
     pool,
     'UPDATE orders SET status = ? WHERE id = ?',
@@ -186,7 +184,6 @@ const updateOrderItemCount = async (req, res) => {
         const { itemId, action } = req.body;
         const userId = req.userId;
         const cartId = await getOrCreateCart(userId);
-        console.log(cartId);
 
         if (action === 'increase') {
             const result = await runQuery(
@@ -304,7 +301,6 @@ const placeOrder = async (req, res) => {
         }
 
         const balance = users[0].balance;
-        console.log('balance', balance);
         if (total > balance) {
             return res.status(400).json({success:false, msg: 'Insufficient balance!'});
         }
@@ -408,7 +404,6 @@ const rateItem = async (req, res) => {
             `,
             [req.userId, itemId]
         );
-        console.log(reviewed)
         if (reviewed[0].reviewed > 0) {
             return res.status(400).json({ success: false, msg: "You've already submitted a review for this item." });
         }

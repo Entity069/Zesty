@@ -196,7 +196,7 @@
                         shwErr('Validation Error', 'Please fill all required fields');
                         return;
                     }
-                    console.log(userId);
+                    
                     const response = await fetch('/api/admin/edit-user', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },

@@ -58,7 +58,7 @@ const dashboard = async (req, res) => {
         `,
         [req.userId]
     );
-    console.log(revenue);
+    
     const user = users[0];
     res.render('seller/dashboard', { user: user, revenue: revenue, items: items, orders: orders, catered: catered });
 }
@@ -74,7 +74,7 @@ const addItems = async (req, res) => {
     }
     
     const categories = await getAllCategories();
-    console.log(categories);
+    
     const user = users[0];
     res.render('seller/add-items', { user: user, categories: categories });
 }
@@ -122,7 +122,7 @@ const editItems = async (req, res) => {
         `,
         [id]
     );
-    console.log(item)
+    
     if (req.userId !== item[0].seller_id) {
         return res.render('error');
     }

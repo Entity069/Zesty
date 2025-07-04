@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             submitBtn.disabled = true
 
             const result = await login(email, password)
-            console.log(result)
+
             if (result.success) {
                 shwSucc("Login Successful!", result.msg)
                 setTimeout(() => {
@@ -189,7 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
             submitBtn.disabled = true
 
             const result = await register({ first_name, last_name, email, password, address })
-            console.log(result)
             if (result.success) {
                 shwSucc("Registration Successful", result.msg)
                 setTimeout(() => {
@@ -228,7 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const result = await resetPassword(newPwd)
-            console.log(result.msg)
             if (result.success) {
                 shwSucc("Password Updated!", result.msg)
                 setTimeout(() => {
@@ -260,7 +258,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const result = await forgotPassword(email)
-            console.log(email, submitBtn, originalText, result)
 
             if (result.success) {
                 shwSucc("Password reset link sent!", "An email has been sent to your email.")

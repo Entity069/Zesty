@@ -109,7 +109,7 @@ const itemDetails = async (req, res) => {
     if (items.length === 0) {
         return res.redirect('/search')
     }
-    console.log(items)
+    
     res.render('user/item', { user: users[0], item: items[0] })
 }
 

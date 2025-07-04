@@ -114,8 +114,7 @@ const verifyEmail = async (req, res) => {
     try {
         const token = req.query.token;
         const email = parseJwt(token).email;
-        console.log(token);
-        console.log(email);
+        
         try {
             jwt.verify(token, JWT_SECRET);
             await runQuery(
@@ -137,7 +136,7 @@ const verifyEmail = async (req, res) => {
 const resetPassword = async (req, res) => {
     try {
         const { email } = req.body;
-        console.log(email)
+        
         const users = await runQuery(
             pool,
             'SELECT password, updated_at FROM users where email = ?',
@@ -175,8 +174,7 @@ const postResetPassword = async (req, res) => {
         const token = req.query.token;
         const email = jwt.decode(token).email;
         const { password } = req.body;
-        console.log(email)
-        console.log(password)
+        
         const users = await runQuery(
             pool,
             'SELECT password, updated_at FROM users where email = ?',
