@@ -16,28 +16,28 @@
         <nav class="nav flex-column flex-grow-1">
             <div class="nav-item">
                 <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/seller/dashboard">
-                    <button class="nav-link active d-flex align-items-center">
+                    <button class="nav-link d-flex align-items-center <%= active === 'dashboard' ? 'active' : '' %>">
                         <i class="fas fa-th-large me-3"></i>Dashboard
                     </button>
                 </a>
             </div>
             <div class="nav-item">
-                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/add-items">
-                    <button class="nav-link d-flex align-items-center">
+                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/seller/add-items">
+                    <button class="nav-link d-flex align-items-center <%= active === 'add' ? 'active' : '' %>">
                         <i class="fas fa-plus me-3"></i>Add Item
                     </button>
                 </a>
             </div>
             <div class="nav-item">
-                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/manage-items">
-                    <button class="nav-link d-flex align-items-center">
+                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/seller/manage-items">
+                    <button class="nav-link d-flex align-items-center <%= active === 'manage' ? 'active' : '' %>">
                         <i class="fas fa-edit me-3"></i>Manage Items
                     </button>
                 </a>
             </div>
             <div class="nav-item">
                 <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/my-profile">
-                    <button class="nav-link d-flex align-items-center">
+                    <button class="nav-link d-flex align-items-center <%= active === 'profile' ? 'active' : '' %>">
                         <i class="fas fa-user me-3"></i>Profile
                     </button>
                 </a>

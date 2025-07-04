@@ -11,11 +11,11 @@
         <%- include('../partial/toasts'); %>
     </div>
     <div class="sidebar p-3" id="sidebar">
-        <%- include(role === 'admin' ? '../partial/admin_sidebar' : (role === 'seller' ? '../partial/seller_sidebar' : '../partial/sidebar')) %>
+        <%- include(role === 'admin' ? '../partial/admin_sidebar' : (role === 'seller' ? '../partial/seller_sidebar' : '../partial/sidebar'), {active: 'profile'}) %>
     </div>
     <div class="main-content">
         <header class="d-flex align-items-center justify-content-between p-4 border-bottom">
-            <%- include(role === 'user' ? '../partial/header' : '../partial/diff-header', {title: 'Add Profile' }); %>
+            <%- include(role === 'user' ? '../partial/header' : '../partial/diff-header', {title: 'Profile' }); %>
         </header>
         <div class="container-fluid p-4">
             <div class="row justify-content-center">

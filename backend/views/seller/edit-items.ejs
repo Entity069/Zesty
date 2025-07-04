@@ -10,7 +10,7 @@
     </div>
 
     <div class="sidebar p-3" id="sidebar">
-        <%- include('../partial/seller_sidebar'); %>
+        <%- include('../partial/seller_sidebar', {active: 'manage'}); %>
     </div>
 
     <div class="main-content">
@@ -120,7 +120,7 @@
                                     <button type="submit" class="btn btn-primary" id="edit-item-btn" form="edit-item-form">
                                         <i class="fas fa-save me-2"></i>Update Item
                                     </button>
-                                    <a href="/manage-items" class="btn btn-outline-secondary">
+                                    <a href="/seller/manage-items" class="btn btn-outline-secondary">
                                         <i class="fas fa-arrow-left me-2"></i>Back to Items
                                     </a>
                                 </div>
@@ -298,7 +298,7 @@
                     if (data.success) {
                         shwSucc('Item Updated', data.msg);
                         setTimeout(() => {
-                            window.location.href = '/manage-items';
+                            window.location.href = '/seller/manage-items';
                         }, 1500);
                     } else {
                         shwErr('Update Failed', data.msg);

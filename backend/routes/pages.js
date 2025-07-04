@@ -13,22 +13,22 @@ router.get('/register', authMiddlewares.redirectIfIn, userPages.register);
 router.get('/verified', authMiddlewares.redirectIfIn, userPages.verifiedEmail);
 router.get('/pwd-reset', authMiddlewares.redirectIfIn, userPages.reset);
 
-router.get('/home', authMiddlewares.verifyToken, authMiddlewares.loginRequired, userPages.home);
-router.get('/my-orders', authMiddlewares.verifyToken, authMiddlewares.loginRequired, userPages.getUserOrders);
-router.get('/my-cart', authMiddlewares.verifyToken, authMiddlewares.loginRequired, userPages.getUserCart);
+router.get('/home', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.userRequired, userPages.home);
+router.get('/my-orders', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.userRequired, userPages.getUserOrders);
+router.get('/my-cart', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.userRequired, userPages.getUserCart);
 router.get('/my-profile', authMiddlewares.verifyToken, authMiddlewares.loginRequired, userPages.profile);
 
-router.get('/search', authMiddlewares.verifyToken, authMiddlewares.loginRequired, orderPages.search);
-router.get('/item', authMiddlewares.verifyToken, authMiddlewares.loginRequired, orderPages.itemDetails);
+router.get('/search', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.userRequired, orderPages.search);
+router.get('/item', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.userRequired, orderPages.itemDetails);
 
 router.get('/admin/dashboard', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.dashboard);
-router.get('/all-orders', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllOrders);
-router.get('/all-users', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllUsers);
-router.get('/all-categories', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllCategories);
+router.get('/admin/all-orders', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllOrders);
+router.get('/admin/all-users', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllUsers);
+router.get('/admin/all-categories', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.adminRequired, adminPages.getAllCategories);
 
 router.get('/seller/dashboard', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.dashboard);
-router.get('/add-items', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.addItems);
-router.get('/manage-items', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.manageItems);
-router.get('/edit-items', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.editItems);
+router.get('/seller/add-items', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.addItems);
+router.get('/seller/manage-items', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.manageItems);
+router.get('/seller/edit-items', authMiddlewares.verifyToken, authMiddlewares.loginRequired, authMiddlewares.sellerRequired, sellerPages.editItems);
 
 module.exports = router;

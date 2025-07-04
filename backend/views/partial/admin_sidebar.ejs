@@ -15,36 +15,36 @@
         </div>
         <nav class="nav flex-column flex-grow-1">
             <div class="nav-item">
-                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/home">
-                    <button class="nav-link active d-flex align-items-center">
+                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/admin/dashboard">
+                    <button class="nav-link d-flex align-items-center <%= active === 'dashboard' ? 'active' : '' %>">
                         <i class="fas fa-th-large me-3"></i>Dashboard
                     </button>
                 </a>
             </div>
             <div class="nav-item">
-                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/all-orders">
-                    <button class="nav-link d-flex align-items-center">
+                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/admin/all-orders">
+                    <button class="nav-link d-flex align-items-center <%= active === 'orders' ? 'active' : '' %>">
                         <i class="fas fa-shopping-cart me-3"></i>All Orders
                     </button>
                 </a>
             </div>
             <div class="nav-item">
-                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/all-categories">
-                    <button class="nav-link d-flex align-items-center">
+                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/admin/all-categories">
+                    <button class="nav-link d-flex align-items-center <%= active === 'categories' ? 'active' : '' %>">
                         <i class="fas fa-tags me-3"></i>All Categories
                     </button>
                 </a>
             </div>
             <div class="nav-item">
-                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/all-users">
-                    <button class="nav-link d-flex align-items-center">
+                <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/admin/all-users">
+                    <button class="nav-link d-flex align-items-center <%= active === 'users' ? 'active' : '' %>">
                         <i class="fas fa-users me-3"></i>All Users
                     </button>
                 </a>
             </div>
             <div class="nav-item">
                 <a class="link-body-emphasis link-underline link-underline-opacity-0" href="/my-profile">
-                    <button class="nav-link d-flex align-items-center">
+                    <button class="nav-link d-flex align-items-center <%= active === 'profile' ? 'active' : '' %>">
                         <i class="fas fa-user me-3"></i>Profile
                     </button>
                 </a>

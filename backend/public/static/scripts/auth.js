@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (result.success) {
                 shwSucc("Login Successful!", result.msg)
                 setTimeout(() => {
-                    window.location.href = "/home"
+                    location.reload();
                 }, 1500)
             } else {
                 shwErr("Login Failed:", result.msg)

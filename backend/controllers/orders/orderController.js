@@ -230,7 +230,6 @@ const updateOrderItemCount = async (req, res) => {
                 );
             }
         }
-
         return res.status(200).json({ success: true, msg: '' });
     } catch (error) {
         console.error("updateOrderItemCount error:", error);
@@ -263,7 +262,6 @@ const addToCart = async (req, res) => {
                 [cartId, itemId, quantity, itemId]
             );
         }
-
         return res.status(200).json({ success: true, msg: 'Item added to cart.' });
     } catch (error) {
         console.error('addToCart error:', error);
@@ -339,6 +337,15 @@ const placeOrder = async (req, res) => {
 const cancelOrder = async (req, res) => {
     try {
         const { orderId } = req.body;
+        const [status] = await runQuery(
+            pool,
+            'SELECT status FROM orders WHERE id = ?',
+            [orderId]
+        );
+        if (status.status !== 'ordered') {
+            res.status(400).json({ success:false, msg:'This order cannot be cancelled!' });
+        }
+
         const order = await runQuery(
             pool,
             `UPDATE orders SET status = 'cancelled' WHERE id = ?`,
@@ -347,6 +354,7 @@ const cancelOrder = async (req, res) => {
         if (order.length === 0) {
             res.status(400).json({ success:false, msg:'No order found!' });
         }
+        await syncOrderStatus(orderId);
         return res.status(200).json({ success:true, msg:"Your order was cancelled. But you won't be refunded." })
     } catch (error) {
         console.error('cancelOrder error:', error);
@@ -365,6 +373,7 @@ const deliverOrder = async (req, res) => {
         if (order.length === 0) {
             res.status(400).json({ success:false, msg:'No order found!' });
         }
+        await syncOrderStatus(orderId);
         return res.status(200).json({ success:true, msg:"Order marked as delivered." })
     } catch (error) {
         console.error('deliverOrder error:', error);
