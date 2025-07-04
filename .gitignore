@@ -3,4 +3,3 @@ backend/.env
 backend/node_modules/
 backend/public/uploads/
 TODO.md
-db/data.sql
