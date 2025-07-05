@@ -101,7 +101,7 @@ async function getAllOrders() {
 
     const rows = await runQuery(
         pool,
-    `SELECT
+        `SELECT
        o.id            AS order_id,
        o.status        AS status,
        o.created_at    AS created_at,
@@ -140,7 +140,7 @@ async function getOrCreateCart(userId) {
     if (carts.length > 0) {
         return carts[0].id;
     }
-    
+
     const result = await runQuery(
         pool,
         'INSERT INTO orders (user_id) VALUES (?)',
@@ -151,30 +151,30 @@ async function getOrCreateCart(userId) {
 
 async function syncOrderStatus(id) {
 
-  const rows = await runQuery(
-    pool,
-    'SELECT status FROM order_items WHERE order_id = ?',
-    [id]
-  );
-  const statuses = rows.map(r => r.status);
+    const rows = await runQuery(
+        pool,
+        'SELECT status FROM order_items WHERE order_id = ?',
+        [id]
+    );
+    const statuses = rows.map(r => r.status);
 
-  let nstatus;
-  if (statuses.every(s => s === 'ordered')) {
-    nstatus = 'ordered';
-  } else if (statuses.every(s => s === 'preparing')) {
-    nstatus = 'preparing';
-  } else if (statuses.every(s => s === 'prepared')) {
-    nstatus = 'prepared';
-  } else if (statuses.includes('preparing')) {
-    nstatus = 'preparing';
-  } else {
-    nstatus = 'ordered';
-  };
-  await runQuery(
-    pool,
-    'UPDATE orders SET status = ? WHERE id = ?',
-    [nstatus, id]
-  );
+    let nstatus;
+    if (statuses.every(s => s === 'ordered')) {
+        nstatus = 'ordered';
+    } else if (statuses.every(s => s === 'preparing')) {
+        nstatus = 'preparing';
+    } else if (statuses.every(s => s === 'prepared')) {
+        nstatus = 'prepared';
+    } else if (statuses.includes('preparing')) {
+        nstatus = 'preparing';
+    } else {
+        nstatus = 'ordered';
+    };
+    await runQuery(
+        pool,
+        'UPDATE orders SET status = ? WHERE id = ?',
+        [nstatus, id]
+    );
 }
 
 // api views
@@ -297,15 +297,15 @@ const placeOrder = async (req, res) => {
         );
 
         if (users.length <= 0) {
-            return res.status(400).json({success:false, msg: 'No user found!!'});
+            return res.status(400).json({ success: false, msg: 'No user found!!' });
         }
 
         const balance = users[0].balance;
         if (total > balance) {
-            return res.status(400).json({success:false, msg: 'Insufficient balance!'});
+            return res.status(400).json({ success: false, msg: 'Insufficient balance!' });
         }
 
-        await runQuery( 
+        await runQuery(
             pool,
             `UPDATE orders SET status = 'ordered' WHERE id = ?`,
             [cartId]
@@ -320,10 +320,10 @@ const placeOrder = async (req, res) => {
         await runQuery(
             pool,
             'UPDATE users SET balance = ? WHERE id = ?',
-            [`${balance-total}`, userId]
+            [`${balance - total}`, userId]
         )
 
-        return res.status(200).json({ success: true, msg:"Your order was placed." });
+        return res.status(200).json({ success: true, msg: "Your order was placed." });
     } catch (error) {
         console.error('placeOrder error:', error);
         return res.status(500).json({ success: false, msg: 'Internal server error.' });
@@ -339,7 +339,7 @@ const cancelOrder = async (req, res) => {
             [orderId]
         );
         if (status.status !== 'ordered') {
-            res.status(400).json({ success:false, msg:'This order cannot be cancelled!' });
+            res.status(400).json({ success: false, msg: 'This order cannot be cancelled!' });
         }
 
         const order = await runQuery(
@@ -348,10 +348,15 @@ const cancelOrder = async (req, res) => {
             [orderId]
         );
         if (order.length === 0) {
-            res.status(400).json({ success:false, msg:'No order found!' });
+            res.status(400).json({ success: false, msg: 'No order found!' });
         }
-        await syncOrderStatus(orderId);
-        return res.status(200).json({ success:true, msg:"Your order was cancelled. But you won't be refunded." })
+        await runQuery(
+            pool,
+            `UPDATE order_items SET status = 'cancelled' WHERE order_id = ?`,
+            [orderId]
+        );
+
+        return res.status(200).json({ success: true, msg: "Your order was cancelled. But you won't be refunded." })
     } catch (error) {
         console.error('cancelOrder error:', error);
         return res.status(500).json({ success: false, msg: 'Internal server error.' });
@@ -367,10 +372,16 @@ const deliverOrder = async (req, res) => {
             [orderId]
         );
         if (order.length === 0) {
-            res.status(400).json({ success:false, msg:'No order found!' });
+            res.status(400).json({ success: false, msg: 'No order found!' });
         }
-        await syncOrderStatus(orderId);
-        return res.status(200).json({ success:true, msg:"Order marked as delivered." })
+
+        await runQuery(
+            pool,
+            `UPDATE order_items SET status = 'delivered' WHERE order_id = ?`,
+            [orderId]
+        );
+
+        return res.status(200).json({ success: true, msg: "Order marked as delivered." })
     } catch (error) {
         console.error('deliverOrder error:', error);
         return res.status(500).json({ success: false, msg: 'Internal server error.' });
@@ -393,7 +404,7 @@ const rateItem = async (req, res) => {
             [itemId, req.userId]
         );
         if (count[0].count === 0) {
-            return res.status(400).json({ success:false, msg:"Have some shame. You are reviewing an item which you didn't even bought. No wonder you are a brokie."})
+            return res.status(400).json({ success: false, msg: "Have some shame. You are reviewing an item which you didn't even bought. No wonder you are a brokie." })
         }
         const reviewed = await runQuery(
             pool,
@@ -408,11 +419,11 @@ const rateItem = async (req, res) => {
             return res.status(400).json({ success: false, msg: "You've already submitted a review for this item." });
         }
         await runQuery(
-        pool,
-        'INSERT INTO reviews (user_id, item_id, rating) VALUES (?, ?, ?)',
-        [req.userId, itemId, rating]
+            pool,
+            'INSERT INTO reviews (user_id, item_id, rating) VALUES (?, ?, ?)',
+            [req.userId, itemId, rating]
         );
-        return res.status(201).json({ success:true, msg:"Your review ws submitted!"});
+        return res.status(201).json({ success: true, msg: "Your review ws submitted!" });
     } catch (error) {
         console.error('rateItem error:', error);
         return res.status(500).json({ success: false, msg: 'Internal server error.' });
@@ -427,7 +438,7 @@ module.exports = {
     getAllOrders,
     getOrCreateCart,
     syncOrderStatus,
-    
+
     updateOrderItemCount,
     addToCart,
     placeOrder,
