@@ -35,6 +35,11 @@ body {
 }
 
 .brand {
+  color: var(--primary-orange);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.brand-reg {
   color: white;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }

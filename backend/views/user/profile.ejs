@@ -90,17 +90,8 @@
                                         </h6>
 
                                         <div class="row">
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="form-floating position-relative">
-                                                    <input type="password" class="form-control" id="current-password" name="current-password" placeholder="Current Password">
-                                                    <label for="current-password">Current Password</label>
-                                                    <button type="button" class="password-toggle" onclick="togglePassword('current-password')">
-                                                        <i class="fas fa-eye" id="current-password-icon"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
 
-                                            <div class="col-lg-4 mb-3">
+                                            <div class="col-lg-6 mb-3">
                                                 <div class="form-floating position-relative">
                                                     <input type="password" class="form-control" id="new-password" name="new-password" placeholder="New Password">
                                                     <label for="new-password">New Password</label>
@@ -110,12 +101,26 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-lg-4 mb-3">
+                                            <div class="col-lg-6 mb-3">
                                                 <div class="form-floating position-relative">
                                                     <input type="password" class="form-control" id="confirm-password" name="confirm-password" placeholder="Confirm Password">
                                                     <label for="confirm-password">Confirm Password</label>
                                                     <button type="button" class="password-toggle" onclick="togglePassword('confirm-password')">
                                                         <i class="fas fa-eye" id="confirm-password-icon"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h6 class="text-orange mb-3">
+                                            <i class="fas fa-key me-2"></i>Enter current password to save changes
+                                        </h6>
+                                        <div class="row">
+                                            <div class="col-lg-6 mb-3">
+                                                <div class="form-floating position-relative">
+                                                    <input type="password" class="form-control" id="current-password" name="current-password" placeholder="Current Password">
+                                                    <label for="current-password">Current Password</label>
+                                                    <button type="button" class="password-toggle" onclick="togglePassword('current-password')">
+                                                        <i class="fas fa-eye" id="current-password-icon"></i>
                                                     </button>
                                                 </div>
                                             </div>

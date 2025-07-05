@@ -251,16 +251,19 @@
                         });
 
                         const data = await response.json();
+
                         if (data.success) {
                             shwSucc('Balance Added', data.msg);
-                            document.querySelector('.bg-warning .fw-bold').textContent = `₹${data.newBalance}`;
+                            const bal = document.querySelector('.bg-warning .fw-bold');
+                            const currBal = (parseFloat(bal.textContent.replace('₹', '').replace(/[^0-9.]/g, '')) + parseFloat(balance)).toFixed(2);
+                            document.querySelector('.bg-warning .fw-bold').textContent = `₹ ${intcomma(currBal)}`;
                             bootstrap.Modal.getInstance(document.getElementById('add-balance')).hide();
                             document.getElementById('add-balance-form').reset();
                         } else {
                             shwErr('Payment Failed', data.msg);
                         }
                     } catch (error) {
-                        shwErr('Payment Failed', 'Could not process payment. Please try again.');
+                        shwErr('Payment Failed', error);
                     } finally {
                         this.innerHTML = originalText;
                         this.disabled = false;
