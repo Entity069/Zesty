@@ -28,7 +28,7 @@
                                 <h3 class="fw-bold mb-2">Get Up To 69% Discount On Your First Order</h3>
                                 <p class="mb-3 opacity-90">Get the discount from one of the best dishes that are
                                     prepared by our top 0.69% chef around the world.</p>
-                                <button class="btn btn-light btn-lg">Order Now</button>
+                                <button class="btn btn-light btn-lg disabled">Order Now</button>
                             </div>
                             <div class="col-lg-5 text-end">
                                 <div class="promo-pic">
@@ -234,8 +234,8 @@
                 document.getElementById('add-balance-btn').addEventListener('click', async function () {
                     const balance = document.getElementById('balance-amt').value;
 
-                    if (!balance || balance <= 0) {
-                        shwErr('Invalid Amount', 'Please enter a valid amount');
+                    if (!balance || balance <= 0 || balance > 99999999) {
+                        shwErr('Invalid Amount', 'Balance should be between 0 and 99,999,999!');
                         return;
                     }
 

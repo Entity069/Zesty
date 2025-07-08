@@ -26,6 +26,11 @@ const updateAddr = async (req, res) => {
 const updateBalance = async (req, res) => {
     try {
         const { balance } = req.body;
+
+        if ( !balance || balance <= 0 || balance > 99999999 ) {
+            return res.status(400).json({ success: false, msg: 'Balance should be between 0 and 99,999,999!' });
+        }
+
         await runQuery(
             pool,
             'UPDATE users SET balance = balance + ? WHERE id = ?',
