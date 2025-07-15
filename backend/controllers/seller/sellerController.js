@@ -20,7 +20,7 @@ const addItem = async (req, res) => {
 
     try { 
         const { name, description, price, category, status } = req.body;
-        if (!name || !description || !price || !category || !status) {
+        if (!name || !description || !price || !category || !status || !req.file) {
             deleteFile();
             return res.status(400).json({success: false, msg: 'Please input all the fields'});
         }

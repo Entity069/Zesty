@@ -32,19 +32,19 @@
                                     <div class="col-md-8">
                                         <div class="form-floating">
                                             <input type="text" class="form-control" id="item-name" placeholder="Item Name" required>
-                                            <label for="item-name">Item Name</label>
+                                            <label for="item-name">Item Name <span style="color:red;">*</span></label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-floating">
                                             <input type="number" class="form-control" id="item-price" placeholder="Price" step="0.01" min="0" required>
-                                            <label for="item-price">Price (₹)</label>
+                                            <label for="item-price">Price (₹) <span style="color:red;">*</span></label>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-floating">
                                             <textarea class="form-control" id="item-description" placeholder="Description" style="height: 100px;" required></textarea>
-                                            <label for="item-description">Description</label>
+                                            <label for="item-description">Description <span style="color:red;">*</span></label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -54,7 +54,7 @@
                                                 <option value="<%= category.id %>"><%= category.name %></option>
                                                 <% }) %>
                                             </select>
-                                            <label for="item-category">Category</label>
+                                            <label for="item-category">Category <span style="color:red;">*</span></label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -64,7 +64,7 @@
                                                 <option value="unavailable">Unavailable</option>
                                                 <option value="discontinued">Discontinued</option>
                                             </select>
-                                            <label for="item-status">Status</label>
+                                            <label for="item-status">Status <span style="color:red;">*</span></label>
                                         </div>
                                     </div>
                                 </div>
@@ -77,8 +77,13 @@
                                 
                                 <div class="row g-3">
                                     <div class="col-12">
-                                        <label for="item-image" class="form-label">Upload Image</label>
+                                        <label for="item-image" class="form-label">Upload Image <span style="color:red;">*</span></label>
                                         <input type="file" class="form-control" id="item-image" accept="image/*">
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-text">
+                                            <span style="color:red;">*</span> represents required fields.
+                                        </div>
                                     </div>
                                 </div>  
                             </div>
