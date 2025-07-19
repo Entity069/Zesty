@@ -440,7 +440,7 @@ const rateItem = async (req, res) => {
             'INSERT INTO reviews (user_id, item_id, rating) VALUES (?, ?, ?)',
             [req.userId, itemId, rating]
         );
-        return res.status(201).json({ success: true, msg: "Your review ws submitted!" });
+        return res.status(201).json({ success: true, msg: "Your review was submitted!" });
     } catch (error) {
         console.error('rateItem error:', error);
         return res.status(500).json({ success: false, msg: 'Internal server error.' });

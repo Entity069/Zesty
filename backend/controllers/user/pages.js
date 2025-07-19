@@ -36,7 +36,7 @@ const home = async (req, res) => {
 
     const categories = await runQuery(
         pool,
-        'SELECT * FROM categories',
+        'SELECT * FROM categories LIMIT 6',
         []
     );
 

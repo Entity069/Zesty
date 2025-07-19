@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { pool, runQuery } = require('../../config/db');
+const orderController = require('../orders/orderController');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'thisisnotaproductionkey';
 
@@ -113,7 +114,59 @@ const itemDetails = async (req, res) => {
     res.render('user/item', { user: users[0], item: items[0] })
 }
 
+const allCategories = async (req, res) => {
+    const users = await runQuery(
+        pool,
+        'SELECT * FROM users WHERE id = ?',
+        [req.userId]
+    );
+    if (users.length === 0) {
+        return res.status(401).redirect('/register');
+    }
+
+    const categories = await orderController.getAllCategories();
+
+    res.render('user/categories', { user: users[0], categories: categories });
+};
+
+const categoryItems = async (req, res) => {
+    const category = req.params.category || '';
+    if (category === '') {
+        return res.redirect('/categories');
+
+    }
+    const users = await runQuery(
+        pool,
+        'SELECT * FROM users WHERE id = ?',
+        [req.userId]
+    );
+    if (users.length === 0) {
+        return res.status(401).redirect('/register');
+    }
+
+        const items = await runQuery(
+        pool,
+        `
+        SELECT
+            i.id,
+            i.name,
+            i.image,
+            i.description,
+            i.price,
+            c.name AS category
+        FROM items i
+        JOIN categories c ON c.id = i.category_id
+        WHERE c.name = ?
+        `,
+        [category]
+    );
+
+    res.render('user/category-items', { user: users[0], items: items, category: category });
+};
+
 module.exports = {
     search,
-    itemDetails
+    itemDetails,
+    allCategories,
+    categoryItems
 };
