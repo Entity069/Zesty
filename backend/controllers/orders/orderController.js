@@ -89,11 +89,28 @@ async function getAllItems() {
 
     const rows = await runQuery(
         pool,
-        'SELECT * FROM items',
+        `
+        SELECT
+            i.id,
+            i.name,
+            i.image,
+            i.price,
+            i.status,
+            i.created_at,
+            u.first_name  AS fname,
+            u.last_name   AS lname,
+            c.name        AS cname,
+            ROUND(COALESCE(AVG(r.rating), 0), 1)    AS rating
+        FROM items AS i
+        JOIN users      AS u ON i.seller_id   = u.id
+        JOIN categories AS c ON i.category_id = c.id
+        LEFT JOIN reviews    AS r ON i.id     = r.item_id
+        GROUP BY i.id, i.name, i.image, i.price, i.status, i.created_at, u.first_name, u.last_name, c.name
+        `,
         []
     );
     if (rows.length === 0) return null;
-
+    
     return rows;
 };
 

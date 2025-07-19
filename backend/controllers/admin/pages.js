@@ -48,6 +48,22 @@ const getAllCategories = async (req, res) => {
 	res.render('admin/categories', { user: user });
 };
 
+const getAllItems = async (req, res) => {
+	const users = await runQuery(
+		pool,
+		'SELECT * FROM users WHERE id = ?',
+		[req.userId]
+	);
+
+	if (users.length === 0) {
+		return res.status(401).redirect('/register');
+	}
+
+	const user = users[0];
+	res.render('admin/items', { user: user });
+};
+
+
 const dashboard = async (req, res) => {
 	const users = await runQuery(
 		pool,
@@ -115,5 +131,6 @@ module.exports = {
 	getAllOrders,
 	getAllUsers,
 	getAllCategories,
+	getAllItems,
 	dashboard
 };

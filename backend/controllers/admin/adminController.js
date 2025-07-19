@@ -54,6 +54,16 @@ const allCategories = async (req, res) => {
   }
 };
 
+const allItems = async (req, res) => {
+  try {
+    const items = await orderController.getAllItems();
+    return res.status(200).json({ success: true, msg:"All items fetched successfull.", items:items });
+  } catch (error) {
+    console.error('allItems error:', error);
+    return res.status(500).json({ success: false, msg: 'Internal server error' });
+  }
+};
+
 const addCategory = async (req, res) => {
     try {
         const { name, description } = req.body;
@@ -84,11 +94,28 @@ const editCategory = async (req, res) => {
     }
 };
 
+const updateItemStatus = async (req, res) => {
+    try {
+        const { status, itemId } = req.body;
+        await runQuery(
+            pool,
+            'UPDATE items SET status = ? WHERE id = ?',
+            [status, itemId]
+        );
+        return res.status(200).json({ success: true, msg: 'Item status updated successfully.'})
+    } catch (error) {
+        console.error('updateItemStatus error:', error);
+        return res.status(500).json({ success: false, msg: 'An internal server error occurred!' });
+    }
+};
+
 module.exports = {
   allOrders,
   allUsers,
   updateUser,
   allCategories,
+  allItems,
   addCategory,
-  editCategory
+  editCategory,
+  updateItemStatus
 };
